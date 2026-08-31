@@ -1,11 +1,10 @@
 import { Tables } from "@/api/db/tables.ts";
 import { OrderPayment } from "@/api/model/order_payment.ts";
+import { toRecordId } from "@/lib/utils.ts";
+import { nanoid } from "nanoid";
+import { runWriteTransaction, type TxRunner, type TxStatement } from "@/lib/db-transaction.ts";
 
-type SyncOrderPaymentsDb = {
-  create: (table: string, data: Record<string, unknown>) => Promise<any>;
-  merge: (id: unknown, data: Record<string, unknown>) => Promise<any>;
-  delete: (id: unknown) => Promise<any>;
-};
+type SyncOrderPaymentsDb = TxRunner;
 
 export const isPersistedOrderPaymentId = (id: unknown): boolean => {
   if (id === null || id === undefined) {
@@ -42,23 +41,25 @@ export async function syncOrderPayments(
       .map((payment) => paymentIdKey(payment.id)),
   );
 
-  for (const existingPayment of existing) {
-    const key = paymentIdKey(existingPayment.id);
-    if (!desiredPersistedKeys.has(key)) {
-      try {
-        await db.delete(existingPayment.id);
-      } catch {
-        // Record may already be gone (stale link)
-      }
+  const statements: TxStatement[] = [];
+
+  // Delete rows the UI dropped. DELETE of an already-gone record is a no-op,
+  // so the old per-row try/catch is unnecessary inside the transaction.
+  existing.forEach((existingPayment, index) => {
+    if (!desiredPersistedKeys.has(paymentIdKey(existingPayment.id))) {
+      statements.push({
+        sql: `DELETE $pay_del_${index}`,
+        vars: { [`pay_del_${index}`]: existingPayment.id },
+      });
     }
-  }
+  });
 
   const paymentIds: any[] = [];
   const payments: OrderPayment[] = [];
 
-  for (const payment of desiredPayments) {
+  desiredPayments.forEach((payment, index) => {
     if (payment == null || !payment.payment_type?.id) {
-      continue;
+      return;
     }
 
     const payload = {
@@ -69,24 +70,27 @@ export async function syncOrderPayments(
     };
 
     if (isPersistedOrderPaymentId(payment.id)) {
-      try {
-        await db.merge(payment.id, payload);
-        paymentIds.push(payment.id);
-        payments.push(payment);
-        continue;
-      } catch {
-        // Missing record — fall through and recreate
-      }
+      // UPSERT (not UPDATE) so a link to a vanished record recreates it —
+      // the behaviour the old merge/catch/recreate path had.
+      statements.push({
+        sql: `UPSERT $pay_upd_${index} MERGE $pay_data_${index}`,
+        vars: { [`pay_upd_${index}`]: payment.id, [`pay_data_${index}`]: payload },
+      });
+      paymentIds.push(payment.id);
+      payments.push(payment);
+      return;
     }
 
-    const [created] = await db.create(Tables.order_payment, payload);
-    const createdId = created?.id;
-    paymentIds.push(createdId);
-    payments.push({
-      ...payment,
-      id: createdId,
+    const createdId = toRecordId(`${Tables.order_payment}:${nanoid()}`);
+    statements.push({
+      sql: `CREATE $pay_new_${index} CONTENT $pay_data_${index}`,
+      vars: { [`pay_new_${index}`]: createdId, [`pay_data_${index}`]: payload },
     });
-  }
+    paymentIds.push(createdId);
+    payments.push({ ...payment, id: createdId });
+  });
+
+  await runWriteTransaction(db, statements);
 
   return { paymentIds, payments };
 }

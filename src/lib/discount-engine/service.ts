@@ -7,6 +7,8 @@ import type { useDB } from '@/api/db/db.ts'
 import type { User } from '@/api/model/user.ts'
 import {toRecordId} from "@/lib/utils.ts";
 import { toTargetId } from '@/lib/discount-engine/target-ids.ts'
+import { nanoid } from 'nanoid'
+import { runWriteTransaction, type TxStatement } from '@/lib/db-transaction.ts'
 
 export type DbClient = ReturnType<typeof useDB>
 
@@ -39,53 +41,64 @@ export const persistOrderDiscounts = async (
   const now = nowSurrealDateTime()
   const uniqueLines = dedupeAppliedLines(lines)
 
-  // Drop denorm refs first so concurrent FETCH cannot resolve deleted records.
-  await db.merge(orderRecordId, {
-    order_discounts: [],
-  })
+  const newIds = uniqueLines.map(() => `${Tables.order_discounts}:${nanoid()}`)
+  const payloads = uniqueLines.map(line => ({
+    order: orderRecordId,
+    discount: toRecordId(toTargetId(line.discountId) || line.discountId),
+    name: line.name,
+    scope: line.scope,
+    value_type: line.valueType,
+    applied_amount: line.appliedAmount,
+    applied_rate: line.appliedRate ?? null,
+    base_amount: line.appliedAmount,
+    tax_treatment: line.taxTreatment,
+    application_type: line.applicationType,
+    reason: toRecordId(line.reasonId || null),
+    reason_text: line.reasonText || null,
+    applied_by: toRecordId(user?.id || null),
+    order_items: line.lineAllocations?.map(l => toRecordId(l.orderItemId)) || [],
+    line_allocations: line.lineAllocations?.map(l => ({
+      order_item: toRecordId(l.orderItemId),
+      amount: l.amount,
+    })) || [],
+    created_at: now,
+  }))
 
-  await db.query(
-    `DELETE ${Tables.order_discounts} WHERE order = $orderId`,
-    { orderId: orderRecordId }
-  )
+  // One transaction: drop the old order_discounts, write the new set, and
+  // re-point the order's denorm array. A concurrent FETCH sees the old set or
+  // the new one, never a half-cleared gap — and a dropped connection can't
+  // leave the order pointing at rows that were deleted but not replaced.
+  const statements: TxStatement[] = [
+    {
+      sql: `UPDATE $od_order MERGE { order_discounts: [] }`,
+      vars: { od_order: orderRecordId },
+    },
+    {
+      sql: `DELETE ${Tables.order_discounts} WHERE order = $od_order`,
+    },
+  ]
 
-  const created: OrderDiscount[] = []
-  const orderDiscountRecordIds: unknown[] = []
-  for (const line of uniqueLines) {
-    const inserted = await db.create(Tables.order_discounts, {
-      order: orderRecordId,
-      discount: toRecordId(toTargetId(line.discountId) || line.discountId),
-      name: line.name,
-      scope: line.scope,
-      value_type: line.valueType,
-      applied_amount: line.appliedAmount,
-      applied_rate: line.appliedRate ?? null,
-      base_amount: line.appliedAmount,
-      tax_treatment: line.taxTreatment,
-      application_type: line.applicationType,
-      reason: toRecordId(line.reasonId || null),
-      reason_text: line.reasonText || null,
-      applied_by: toRecordId(user?.id || null),
-      order_items: line.lineAllocations?.map(l => toRecordId(l.orderItemId)) || [],
-      line_allocations: line.lineAllocations?.map(l => ({
-        order_item: toRecordId(l.orderItemId),
-        amount: l.amount,
-      })) || [],
-      created_at: now,
+  payloads.forEach((payload, index) => {
+    statements.push({
+      sql: `CREATE $od_new_${index} CONTENT $od_data_${index}`,
+      vars: {
+        [`od_new_${index}`]: toRecordId(newIds[index]),
+        [`od_data_${index}`]: payload,
+      },
     })
-    const record = (Array.isArray(inserted) ? inserted[0] : inserted) as unknown as OrderDiscount
-    created.push(record)
-    if (record?.id) {
-      orderDiscountRecordIds.push(toRecordId(record.id))
-    }
-  }
-
-  // Mirror order_taxes: store junction IDs on the order so FETCH order_discounts works.
-  await db.merge(orderRecordId, {
-    order_discounts: orderDiscountRecordIds,
   })
 
-  return created
+  statements.push({
+    sql: `UPDATE $od_order MERGE $od_denorm`,
+    vars: { od_denorm: { order_discounts: newIds.map(id => toRecordId(id)) } },
+  })
+
+  await runWriteTransaction(db, statements)
+
+  return uniqueLines.map((_, index) => ({
+    ...payloads[index],
+    id: toRecordId(newIds[index]),
+  })) as unknown as OrderDiscount[]
 }
 
 export const loadActiveOrderDiscounts = async (
