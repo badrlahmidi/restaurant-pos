@@ -215,7 +215,7 @@ export const selectToolsForPrompt = (
   }
 
   const domains = detectDomainsFromPrompt(prompt, format);
-  let toolNames = applyPromptToolFilters(collectToolNames(domains, prompt), prompt);
+  const toolNames = applyPromptToolFilters(collectToolNames(domains, prompt), prompt);
   let tools = resolveToolDefinitions(toolNames, true);
 
   if (allowedModules.length) {

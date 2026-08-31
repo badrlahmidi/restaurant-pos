@@ -215,7 +215,7 @@ export const parseOptionalNumber = (value: unknown): number | null => {
     return null;
   }
 
-  const cleaned = String(value).replace(/[^0-9.,\-]/g, "").replace(/,/g, "");
+  const cleaned = String(value).replace(/[^0-9.,-]/g, "").replace(/,/g, "");
   if (!cleaned) return null;
 
   const parsed = Number(cleaned);

@@ -11,7 +11,7 @@ const CHAT_COMPLETIONS_PATH = "/ai/chat/completions";
 const AI_USAGE_PATH = "/ai/usage";
 
 /** Stable app tasks that map to AI profiles via AI_TASK_* env on the API. */
-export type AiTask = "reporting" | "analysis" | "forecast" | "ocr" | (string & {});
+export type AiTask = "reporting" | "analysis" | "forecast" | "ocr" | (string & Record<never, never>);
 
 export interface OpenAIToolDefinition {
   type: "function";
@@ -177,7 +177,7 @@ export const fetchAiUsage = async (): Promise<AiUsageStatus | null> => {
 };
 
 export type OpenAIResponseFormat = {
-  type: "json_object" | "text" | (string & {});
+  type: "json_object" | "text" | (string & Record<never, never>);
   [key: string]: unknown;
 };
 

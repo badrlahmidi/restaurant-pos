@@ -144,7 +144,7 @@ export function createAiJournalEntryImportConfig({
 
       let entryId = entryCache.get(reference);
       if (!entryId) {
-        const [created] = await db.create?.(Tables.account_journal_entries, {
+        const [created] = await db.create(Tables.account_journal_entries, {
           entry_date: entryDate,
           description: v.description ? String(v.description) : reference,
           status: "posted",

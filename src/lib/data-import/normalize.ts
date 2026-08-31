@@ -19,7 +19,7 @@ function coerceBoolean(value: any): boolean | null {
 function coerceNumber(value: any): number | null {
   if (value === null || value === undefined || value === "") return null;
   if (typeof value === "number" && Number.isFinite(value)) return value;
-  const cleaned = String(value).replace(/[^0-9.,\-]/g, "").replace(/,/g, "");
+  const cleaned = String(value).replace(/[^0-9.,-]/g, "").replace(/,/g, "");
   if (!cleaned) return null;
   const n = Number(cleaned);
   return Number.isFinite(n) ? n : null;

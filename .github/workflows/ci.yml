@@ -55,8 +55,6 @@ jobs:
           npm test
 
       - name: Lint
-        # Non-blocking: the ESLint setup needs repair (eslint 10 vs plugin 6) and
-        # several rules are disabled in .eslintrc.cjs. Tracked in the codebase
-        # audit as P2. Flip `continue-on-error` to false once that is fixed.
+        # Blocking on ERRORS. ~270 react-hooks/exhaustive-deps warnings remain a
+        # backlog (see .eslintrc.cjs ratchet plan) and do not fail the run.
         run: npm run lint
-        continue-on-error: true
