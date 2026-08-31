@@ -2,9 +2,21 @@
 
 const { WebSocketServer, WebSocket } = require('ws');
 const { verifySession } = require('./jwt');
+const {
+  MODE: FILTER_MODE,
+  SUPPORTED_CLIENT_PROTOCOLS,
+  inspectClientFrame,
+  encodeError,
+} = require('./rpc-filter');
 
 const SURREAL_WS_URL = process.env.SURREAL_URL || 'ws://127.0.0.1:8000/rpc';
 const SURREAL_PROTOCOLS = ['cbor', 'json', 'flatbuffers', 'msgpack'];
+
+// When the RPC filter is active it must be able to read every client frame, so
+// the relay only negotiates the wire formats it can parse. With the filter off
+// it stays fully transparent (original behaviour).
+const CLIENT_PROTOCOLS =
+  FILTER_MODE === 'off' ? SURREAL_PROTOCOLS : SUPPORTED_CLIENT_PROTOCOLS;
 
 function getTokenFromUpgrade(req) {
   try {
@@ -37,7 +49,7 @@ function parseRequestedProtocols(req) {
 }
 
 function selectSurrealProtocol(requested) {
-  for (const p of SURREAL_PROTOCOLS) {
+  for (const p of CLIENT_PROTOCOLS) {
     if (requested.includes(p)) return p;
   }
   return undefined;
@@ -65,7 +77,7 @@ function attachRpcRelay(server) {
   const wss = new WebSocketServer({
     noServer: true,
     handleProtocols(protocols) {
-      for (const p of SURREAL_PROTOCOLS) {
+      for (const p of CLIENT_PROTOCOLS) {
         if (protocols.has(p)) return p;
       }
       return false;
@@ -124,6 +136,16 @@ function attachRpcRelay(server) {
       };
 
       clientWs.on('message', (data, isBinary) => {
+        const verdict = inspectClientFrame(data, isBinary);
+        if (verdict.action === 'block') {
+          console.warn(`[relay-filter] blocked: ${verdict.reason}`);
+          if (clientWs.readyState === WebSocket.OPEN) {
+            clientWs.send(encodeError(verdict.isBinary, verdict.id, verdict.reason), {
+              binary: verdict.isBinary,
+            });
+          }
+          return;
+        }
         sendUp(data, isBinary);
       });
 
@@ -157,6 +179,10 @@ function attachRpcRelay(server) {
       });
     });
   });
+
+  console.log(
+    `RPC relay filter: ${FILTER_MODE} (client protocols: ${CLIENT_PROTOCOLS.join(', ')})`
+  );
 
   return wss;
 }
