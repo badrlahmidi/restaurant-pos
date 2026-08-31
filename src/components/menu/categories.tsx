@@ -39,7 +39,7 @@ export const MenuCategories = () => {
     }
   }, [categories, state.category]);
 
-  const categoryClasses = 'flex-auto whitespace-nowrap !h-[56px] pressable rounded-full px-5';
+  const categoryClasses = 'flex-auto whitespace-nowrap !h-[56px] pressable rounded-md px-5 transition-colors';
   const categoryStyles = {
     '--padding': '0 1.25rem'
   } as CSSProperties;
@@ -54,7 +54,7 @@ export const MenuCategories = () => {
             data-testid={`menu-category-${index}`}
             className={cn(
               categoryClasses,
-              state?.category?.id?.toString() === item?.id?.toString() ? 'bg-gradient' : 'bg-white border-3 border-transparent select-none'
+              state?.category?.id?.toString() === item?.id?.toString() ? 'bg-gradient' : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-primary-100 hover:text-primary-700 select-none'
             )}
             onClick={() => setState(prev => ({
               ...prev,

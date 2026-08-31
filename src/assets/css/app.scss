@@ -26,10 +26,10 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-warning-100 rounded;
+  @apply bg-primary-200 rounded;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-warning-500;
+  @apply bg-primary-500;
 }
 
 @font-face {
@@ -52,6 +52,10 @@ body {
   src: url("../fonts/Orbitron-Regular.ttf");
 }
 
+/* Aronium POS theme: sober, Windows-desktop-style corporate look
+   (Segoe UI family) replacing the previous rounded/playful web fonts. */
+$aronium-font-stack: "Segoe UI", "Urbanist", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+
 html,
 body {
   @apply bg-neutral-50 text-neutral-700;
@@ -64,7 +68,7 @@ input,
 optgroup,
 select,
 textarea {
-  font-family: "Urbanist", sans-serif;
+  font-family: $aronium-font-stack;
 }
 
 .digital {
@@ -79,7 +83,8 @@ a {
   text-decoration: underline;
 }
 h1, h2, h3, h4, h5, h6, .title, .card-title, th{
-  font-family: "Quicksand", sans-serif;
+  font-family: $aronium-font-stack;
+  font-weight: 600;
   @apply text-neutral-900;
 }
 
@@ -185,7 +190,8 @@ h1, h2, h3, h4, h5, h6, .title, .card-title, th{
   --background: #ffffff;
   --color: #000000;
   --border: #ffffff;
-  --radius: theme('borderRadius.lg');
+  /* Aronium theme: flatter, less rounded corners than the original design */
+  --radius: theme('borderRadius.md');
   --scale: 0.9;
   --font-size: 14px;
   --padding: 0.5rem 0.75rem;
@@ -256,15 +262,17 @@ h1, h2, h3, h4, h5, h6, .title, .card-title, th{
     }
   }
   &.btn-primary {
-    @apply border-neutral-900 text-neutral-900 focus:outline-none focus:border-neutral-900 hover:bg-neutral-200;
+    /* Aronium theme: sober corporate blue primary action, flat fill on active
+       (no black+orange combo from the previous "SaaS" look) */
+    @apply border-primary-600 text-primary-700 focus:outline-none focus:border-primary-600 hover:bg-primary-100;
     &:disabled {
-      @apply bg-neutral-200;
+      @apply bg-primary-100;
     }
     &.active, &:active {
-      @apply bg-neutral-900 text-warning-500 shadow-none;
+      @apply bg-primary-600 text-white shadow-none;
     }
     &.btn-filled{
-      @apply bg-neutral-900 text-warning-500;
+      @apply bg-primary-600 text-white;
     }
   }
   &.btn-secondary {

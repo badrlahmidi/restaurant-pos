@@ -55,8 +55,8 @@ export function DropdownItem(props: MenuItemProps & {isActive?: boolean}) {
           'cursor-pointer text-center bg-white p-3 rounded-lg',
           isFocused ? 'focused' : '',
           isOpen ? 'open' : '',
-          props.isDisabled ? 'text-neutral-400' : 'hover:bg-neutral-900 hover:text-warning-500',
-          props.isActive ? 'bg-neutral-900 text-warning-500' : '',
+          props.isDisabled ? 'text-neutral-400' : 'hover:bg-primary-100 hover:text-primary-700',
+          props.isActive ? 'bg-primary-600 text-white' : '',
           props.className
         )
       }}

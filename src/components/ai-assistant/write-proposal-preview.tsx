@@ -175,7 +175,7 @@ export function WriteProposalPreview({proposal}: WriteProposalPreviewProps) {
   return (
     <div className="overflow-hidden rounded-md border border-neutral-200">
       <div className="overflow-x-auto">
-        <div className="flex min-w-max items-center border-b border-neutral-200 bg-neutral-900 px-2 py-1.5 text-xs font-medium text-warning-500">
+        <div className="flex min-w-max items-center border-b border-neutral-200 bg-primary-600 px-2 py-1.5 text-xs font-medium text-white">
           <div className="w-6 shrink-0">#</div>
           {tableColumns.map(col => (
             <div key={col.name} className="w-28 shrink-0 truncate pr-2">{col.label}</div>

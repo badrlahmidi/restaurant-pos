@@ -348,7 +348,7 @@ export function AiAssistantWidget() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-warning-500 bg-neutral-900 text-warning-500 shadow-lg transition-colors hover:bg-neutral-800"
+        className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary-700 bg-primary-600 text-white shadow-lg transition-colors hover:bg-primary-700"
         aria-label={t("common:aiAssistant.open", {name: assistantName})}
       >
         <FontAwesomeIcon icon={faComments} />
@@ -431,7 +431,7 @@ export function AiAssistantWidget() {
               className={cn(
                 "rounded-md px-2 py-1 transition-shadow duration-700",
                 entry.role === "user"
-                  ? "inline-block bg-neutral-900 text-warning-500 rounded-br-none"
+                  ? "inline-block bg-primary-600 text-white rounded-br-none"
                   : entry.role === "system"
                     ? "inline-block border border-warning-200 bg-warning-50 text-neutral-700 italic"
                     : "block w-full max-w-full border border-neutral-200 bg-neutral-50 text-neutral-900",

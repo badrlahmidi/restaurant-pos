@@ -830,7 +830,7 @@ export const OrderPayment = ({
               className={
               cn(
                 "flex justify-between p-3 cursor-pointer",
-                mode === PaymentOptions.Tax && 'bg-neutral-900 text-warning-500'
+                mode === PaymentOptions.Tax && 'bg-primary-600 text-white'
               )
             } onClick={() => {
               protectAction(() => setMode(PaymentOptions.Tax), {
@@ -855,7 +855,7 @@ export const OrderPayment = ({
               className={
               cn(
                 "flex justify-between p-3 cursor-pointer",
-                mode === PaymentOptions.Discount && 'bg-neutral-900 text-warning-500'
+                mode === PaymentOptions.Discount && 'bg-primary-600 text-white'
               )
             } onClick={() => {
               protectAction(() => setMode(PaymentOptions.Discount), {
@@ -879,7 +879,7 @@ export const OrderPayment = ({
               className={
               cn(
                 "flex justify-between p-3 cursor-pointer",
-                mode === PaymentOptions.Coupon && 'bg-neutral-900 text-warning-500'
+                mode === PaymentOptions.Coupon && 'bg-primary-600 text-white'
               )
             } onClick={() => {
               protectAction(() => setMode(PaymentOptions.Coupon), {
@@ -899,7 +899,7 @@ export const OrderPayment = ({
               className={
               cn(
                 "flex justify-between p-3 cursor-pointer",
-                mode === PaymentOptions['Service Charges'] && 'bg-neutral-900 text-warning-500'
+                mode === PaymentOptions['Service Charges'] && 'bg-primary-600 text-white'
               )
             } onClick={() => {
               protectAction(() => setMode(PaymentOptions['Service Charges']), {
@@ -923,7 +923,7 @@ export const OrderPayment = ({
               className={
               cn(
                 "flex justify-between p-3 cursor-pointer",
-                mode === PaymentOptions.Tip && 'bg-neutral-900 text-warning-500'
+                mode === PaymentOptions.Tip && 'bg-primary-600 text-white'
               )
             } onClick={() => {
               protectAction(() => setMode(PaymentOptions.Tip), {
@@ -971,7 +971,7 @@ export const OrderPayment = ({
               className={
               cn(
                 "flex justify-between p-3 cursor-pointer",
-                mode === PaymentOptions.Notes && 'bg-neutral-900 text-warning-500'
+                mode === PaymentOptions.Notes && 'bg-primary-600 text-white'
               )
             } onClick={() => setMode(PaymentOptions.Notes)}>
               <div>{t('tabs.notes')} <FontAwesomeIcon icon={faPencil}/></div>

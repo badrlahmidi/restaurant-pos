@@ -1144,7 +1144,7 @@ export const InventoryDashboardReport = () => {
             <TabList aria-label="Location tabs" className="flex flex-row gap-3 mb-4 flex-wrap">
               {locationStock.map((location) => (
                 <Tab
-                  activeClass="bg-neutral-900 text-warning-500"
+                  activeClass="bg-primary-600 text-white"
                   id={location.locationName}
                   key={location.locationName}
                   className="whitespace-nowrap"

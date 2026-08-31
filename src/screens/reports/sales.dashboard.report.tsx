@@ -586,8 +586,8 @@ const BreakdownTabsWidget = ({
       </div>
       <Tabs selectedKey={selectedTab} onSelectionChange={(key) => setSelectedTab(key as 'chart' | 'table')}>
         <TabList aria-label={`${title} tabs`} className="flex flex-row gap-3 mb-4">
-          <Tab activeClass="bg-neutral-900 text-warning-500" id="chart" key="chart">{t('labels.chart')}</Tab>
-          <Tab activeClass="bg-neutral-900 text-warning-500" id="table" key="table">{t('filters.table')}</Tab>
+          <Tab activeClass="bg-primary-600 text-white" id="chart" key="chart">{t('labels.chart')}</Tab>
+          <Tab activeClass="bg-primary-600 text-white" id="table" key="table">{t('filters.table')}</Tab>
         </TabList>
         <TabPanel id="chart" key="chart">
           <div className="h-[260px]">
@@ -946,8 +946,8 @@ const DeliverySection = ({orders}: {orders: Order[]}) => {
         onSelectionChange={(key: string) => setSelectedTab(key as 'map' | 'table')}
       >
         <TabList aria-label="Delivery tabs" className="flex flex-row gap-3 mb-4">
-          <Tab activeClass="bg-neutral-900 text-warning-500" id="map" key="map">{t('labels.mapView')}</Tab>
-          <Tab activeClass="bg-neutral-900 text-warning-500" id="table" key="table">{t('labels.tableView')}</Tab>
+          <Tab activeClass="bg-primary-600 text-white" id="map" key="map">{t('labels.mapView')}</Tab>
+          <Tab activeClass="bg-primary-600 text-white" id="table" key="table">{t('labels.tableView')}</Tab>
         </TabList>
         <TabPanel id="map" key="map">
           {tabs.map.component}

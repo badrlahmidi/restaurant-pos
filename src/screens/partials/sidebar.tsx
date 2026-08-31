@@ -117,7 +117,7 @@ export const Sidebar = () => {
   });
 
   return (
-    <div className="flex flex-col justify-between h-screen items-center sidebar border border-y-0 border-white bg-white/50 backdrop-blur">
+    <div className="flex flex-col justify-between h-screen items-center sidebar border border-y-0 border-neutral-200 bg-white">
       <div className="w-full">
         <ScrollContainer className="h-[calc(100vh_-_150px)]" hideScrollbars={false}>
           <div className="p-2 flex flex-col">
@@ -129,8 +129,10 @@ export const Sidebar = () => {
                   protectedNavigate(item.link, item.role);
                 }}
                 className={cn(
-                  'flex flex-col text-center cursor-pointer p-[0.4rem] gap-1 rounded-xl pressable no-underline w-full',
-                  pathInfo === item.link ? 'shadow-xl bg-gradient active:shadow-none' : 'text-neutral-900 border-[3px] border-transparent'
+                  'flex flex-col text-center cursor-pointer p-[0.4rem] gap-1 rounded-md pressable no-underline w-full transition-colors',
+                  pathInfo === item.link
+                    ? 'bg-gradient active:shadow-none'
+                    : 'text-neutral-700 border-[3px] border-transparent hover:bg-primary-100 hover:text-primary-700'
                 )}
                 key={item.title}
                 style={{
