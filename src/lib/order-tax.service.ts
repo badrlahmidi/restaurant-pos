@@ -5,6 +5,8 @@ import type { Tax } from '@/api/model/tax.ts';
 import { ORDER_PAYMENT_FETCHES, parseOrderQueryResult } from '@/api/model/order.ts';
 import { collectOrderTaxRows } from '@/lib/tax-calculator.ts';
 import { toRecordId } from '@/lib/utils.ts';
+import { nanoid } from 'nanoid';
+import { runWriteTransaction, type TxStatement } from '@/lib/db-transaction.ts';
 
 export type DbClient = ReturnType<typeof useDB>;
 
@@ -49,30 +51,49 @@ export const syncOrderTaxes = async (
     { orderId: recordId },
   );
   const existing = existingResult?.[0] ?? [];
-  for (const row of existing) {
-    await db.delete(toRecordId(row.id));
-  }
 
-  const orderTaxRecordIds: unknown[] = [];
-  let totalAmount = 0;
+  const newRows = rows.filter((row) => row.amount > 0 && row.tax?.id);
+  const newIds = newRows.map(() => `${Tables.order_taxes}:${nanoid()}`);
+  const totalAmount = roundTax(
+    newRows.reduce((sum, row) => sum + roundTax(row.amount), 0),
+  );
 
-  for (const { tax, amount } of rows) {
-    if (amount <= 0 || !tax?.id) {
-      continue;
-    }
+  // Delete the old order_taxes, write the new ones, and re-point the order's
+  // denormalised tax fields — all in one transaction, so a dropped connection
+  // can't leave the order with no tax rows but a stale tax_amount.
+  const statements: TxStatement[] = [];
 
-    const created = await db.create(Tables.order_taxes, {
-      order: recordId,
-      tax: toRecordId(tax.id),
-      amount: roundTax(amount),
+  existing.forEach((row, index) => {
+    statements.push({
+      sql: `DELETE $ot_del_${index}`,
+      vars: { [`ot_del_${index}`]: toRecordId(row.id) },
     });
-    const record = Array.isArray(created) ? created[0] : created;
-    orderTaxRecordIds.push((record as { id: unknown }).id);
-    totalAmount += roundTax(amount);
-  }
-
-  await db.merge(recordId, {
-    tax_amount: roundTax(totalAmount),
-    order_taxes: orderTaxRecordIds,
   });
+
+  newRows.forEach((row, index) => {
+    statements.push({
+      sql: `CREATE $ot_new_${index} CONTENT $ot_data_${index}`,
+      vars: {
+        [`ot_new_${index}`]: toRecordId(newIds[index]),
+        [`ot_data_${index}`]: {
+          order: recordId,
+          tax: toRecordId(row.tax.id),
+          amount: roundTax(row.amount),
+        },
+      },
+    });
+  });
+
+  statements.push({
+    sql: `UPDATE $ot_order MERGE $ot_denorm`,
+    vars: {
+      ot_order: recordId,
+      ot_denorm: {
+        tax_amount: totalAmount,
+        order_taxes: newIds.map((id) => toRecordId(id)),
+      },
+    },
+  });
+
+  await runWriteTransaction(db, statements);
 };
