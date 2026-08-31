@@ -5,6 +5,7 @@ import {LOGIN} from "@/routes/posr.ts";
 import {WhatsNewDialog} from "@/components/whats-new/whats-new.dialog.tsx";
 import {getSessionToken, isGatewayAuthEnabled} from "@/lib/session.ts";
 import {useHydrateCurrencySymbol} from "@/hooks/useCurrencySymbol.ts";
+import {RouteErrorBoundary} from "@/components/common/error-boundary/route-error-boundary.tsx";
 
 export const ProtectedRoute = () => {
   const {user} = useAtomValue(appPage);
@@ -20,9 +21,9 @@ export const ProtectedRoute = () => {
   }
 
   return (
-    <>
+    <RouteErrorBoundary>
       <Outlet/>
       <WhatsNewDialog/>
-    </>
+    </RouteErrorBoundary>
   );
 };

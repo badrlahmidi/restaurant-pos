@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, aronium-theme]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: type-check · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # CI runners are slower/noisier than a dev box; the discount-engine perf
+      # test is a regression smoke test, not an SLA. Keep it green but meaningful.
+      DISCOUNT_PERF_BUDGET_MS: "600"
+      # Silence Vite's interactive prompts / update checks.
+      CI: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # NOTE: `npm ci` is not usable yet — package-lock.json is out of sync with
+      # package.json upstream, and the dep tree needs legacy peer resolution
+      # (eslint 10 vs @typescript-eslint/eslint-plugin 6). Regenerate the
+      # lockfile (`npm install --legacy-peer-deps` committed) to switch to `npm ci`.
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npx vite build
+
+      - name: Lint
+        # Non-blocking: the ESLint setup needs repair (eslint 10 vs plugin 6) and
+        # several rules are disabled in .eslintrc.cjs. Tracked in the codebase
+        # audit as P2. Flip `continue-on-error` to false once that is fixed.
+        run: npm run lint
+        continue-on-error: true

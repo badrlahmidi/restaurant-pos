@@ -24,6 +24,7 @@ import {I18nProvider} from "@/providers/i18n.provider.tsx";
 import {AppRoutes} from "@/routes/app.routes.tsx";
 import {IntegrationProvider} from "@/providers/integration.provider.tsx";
 import {AiAssistantWidget} from "@/components/ai-assistant/assistant-widget.tsx";
+import {ErrorBoundary} from "@/components/common/error-boundary/error-boundary.tsx";
 
 
 // react query client wrapper
@@ -56,6 +57,7 @@ function App() {
   }, []);
 
   return (
+    <ErrorBoundary fullscreen title="The application hit an unexpected error">
     <QueryClientProvider client={queryClient}>
       <ConfigProvider theme={appAntdTheme}>
         <DatabaseProvider>
@@ -91,6 +93,7 @@ function App() {
         </DatabaseProvider>
       </ConfigProvider>
     </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
