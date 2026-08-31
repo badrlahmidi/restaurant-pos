@@ -4,19 +4,45 @@ const express = require('express');
 const { authenticatePosUser } = require('./auth.service');
 const { signSession, verifySession, revokeSession, extractBearer } = require('./jwt');
 const { issueSurrealAccessToken } = require('./surreal-client');
+const { checkLogin, recordFailure, recordSuccess } = require('./login-throttle');
 
 const router = express.Router();
+
+/**
+ * Best-effort client IP. `x-forwarded-for` is only trustworthy when the gateway
+ * runs behind a proxy that sets it; without one it is client-controlled, so the
+ * per-login counter (which ignores IP) is what actually stops PIN spray.
+ */
+function clientIp(req) {
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return fwd || req.socket?.remoteAddress || 'unknown';
+}
 
 router.post('/login', async (req, res) => {
   try {
     const method = req.body?.method === 'form' ? 'form' : 'pin';
     const login = req.body?.login;
     const password = req.body?.password;
+    const ip = clientIp(req);
+
+    const gate = checkLogin(ip, login);
+    if (gate.limited) {
+      return res
+        .status(429)
+        .set('Retry-After', String(gate.retryAfter))
+        .json({
+          ok: false,
+          error: `Too many failed attempts. Try again in ${Math.ceil(gate.retryAfter / 60)} minute(s).`,
+        });
+    }
 
     const user = await authenticatePosUser({ method, login, password });
     if (!user) {
+      recordFailure(ip, login);
       return res.status(401).json({ ok: false, error: 'Invalid credentials' });
     }
+
+    recordSuccess(ip, login);
 
     const session = await signSession({
       userId: user.id,

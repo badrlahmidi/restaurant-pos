@@ -46,6 +46,14 @@ jobs:
       - name: Production build
         run: npx vite build
 
+      - name: Gateway tests
+        # Standalone package; its lockfile is in sync so `npm ci` is fine here.
+        # Runs the jwt, surreal-client and login-throttle suites via node --test.
+        working-directory: gateway
+        run: |
+          npm ci
+          npm test
+
       - name: Lint
         # Non-blocking: the ESLint setup needs repair (eslint 10 vs plugin 6) and
         # several rules are disabled in .eslintrc.cjs. Tracked in the codebase
