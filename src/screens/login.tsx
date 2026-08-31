@@ -311,8 +311,8 @@ export const Login = () => {
   return (
     <div className="relative" data-testid="login-page">
       <DocumentTitle parts={[t('login.title')]} />
-      <div className="bg-neutral-900 flex justify-center items-center h-screen flex-col gap-8">
-        <h4 className="text-4xl text-neutral-100">{t('login.title')}</h4>
+      <div className="bg-primary-800 flex justify-center items-center h-screen flex-col gap-8">
+        <h4 className="text-4xl text-white">{t('login.title')}</h4>
         <div className="flex gap-3">
           <button
             type="button"
@@ -320,8 +320,8 @@ export const Login = () => {
             className={cn(
               "w-56 border-2 transition-all duration-150 btn btn-filled lg",
               loginMethod === 'pin'
-                ? "!bg-warning-500 text-black border-warning-500"
-                : "!bg-black text-white"
+                ? "!bg-white text-primary-800 border-white"
+                : "!bg-primary-700 text-white border-primary-700"
             )}
             onClick={() => {
               setLoginMethod('pin');
@@ -339,8 +339,8 @@ export const Login = () => {
             className={cn(
               "w-56 border-2 transition-all duration-150 btn btn-filled lg",
               loginMethod === 'form'
-                ? "!bg-warning-500 text-black border-warning-500"
-                : "!bg-black text-white"
+                ? "!bg-white text-primary-800 border-white"
+                : "!bg-primary-700 text-white border-primary-700"
             )}
             onClick={() => {
               setLoginMethod('form');
@@ -426,10 +426,9 @@ export const Login = () => {
           <div className="text-danger-500 text-sm">{t('login.invalidCredentials')}</div>
         )}
       </div>
-      <div className="size-[100px] bg-warning-500/10 absolute top-10 right-[30%] rounded-full pointer-events-none transition-all blur-lg"></div>
-      <div className="size-[200px] bg-primary-500/10 animate-bounce absolute top-20 left-[20%] rounded-full pointer-events-none transition-all blur-2xl"></div>
-      <div className="size-[200px] bg-white/20 absolute bottom-[100px] transition-all right-24 pointer-events-none rotate-45 blur-2xl"></div>
-      <div className="size-[200px] bg-[tomato]/20 absolute bottom-[30%] transition-all left-[150px] pointer-events-none blur-2xl"></div>
+      {/* Aronium theme: removed the bouncing/rotating colored blur blobs
+          (playful "SaaS" decoration) in favor of a flat, sober corporate
+          background matching Aronium POS's desktop login screen. */}
 
       {showClockInModal && (
         <Modal

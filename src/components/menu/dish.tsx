@@ -203,7 +203,7 @@ export const MenuDish = ({
         }}
       >
         <div
-          className="flex-1 bg-white w-fit rounded-xl shadow-lg cursor-pointer menu-item active:shadow-none flex text-neutral-900 active:text-warning-500"
+          className="flex-1 bg-white w-fit rounded-md shadow-sm border border-neutral-200 cursor-pointer menu-item active:shadow-none flex text-neutral-900 active:text-white active:bg-primary-600 transition-colors"
           style={{
             '--padding': '0'
           } as any}
@@ -213,20 +213,20 @@ export const MenuDish = ({
               loading="lazy"
               src={imageSrc}
               alt={item.name}
-              className="rounded-xl rounded-r-none pointer-events-none h-full sm:w-[50px] md:w-[60px] lg:w-[90px] xl:w-[100px] object-cover"/>
+              className="rounded-md rounded-r-none pointer-events-none h-full sm:w-[50px] md:w-[60px] lg:w-[90px] xl:w-[100px] object-cover"/>
           </div>
           <div className="flex flex-1 flex-col px-3 py-2">
             <span className="flex flex-row gap-2 mb-1 flex-wrap">
               {showDishNumber && item.number != null && String(item.number).trim() !== '' && (
                 <span
-                  className="bg-primary-100 text-primary-700 rounded-full border-2 border-primary-300 py-1 px-3 text-sm font-bold"
+                  className="bg-primary-100 text-primary-700 rounded border border-primary-300 py-1 px-3 text-sm font-bold"
                   title={String(item.number)}
                 >
                   #{String(item.number).trim()}
                 </span>
               )}
               <span
-                className="bg-neutral-900 text-warning-500 rounded-full border-2 border-warning-500 py-1 px-3 text-sm font-bold">{withCurrency(price)}</span>
+                className="bg-primary-600 text-white rounded py-1 px-3 text-sm font-bold">{withCurrency(price)}</span>
             </span>
             <h6 className="text-ellipsis line-clamp-2 flex-shrink flex-grow-0 text-pretty text-neutral-700"
                 title={item.name}>
@@ -234,7 +234,7 @@ export const MenuDish = ({
             </h6>
           </div>
         </div>
-        <span className="absolute bottom-2 right-2 text-primary-500 text-xs font-bold">{dishCount(item)}</span>
+        <span className="absolute bottom-2 right-2 text-primary-600 text-xs font-bold">{dishCount(item)}</span>
       </div>
 
       {modifierGroups.length > 0 && modifiersModal && (

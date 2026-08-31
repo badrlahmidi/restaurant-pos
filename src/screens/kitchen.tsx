@@ -612,7 +612,7 @@ export const KitchenScreen = () => {
           </div>
           <div className="input-group flex-1 justify-end flex gap-3 items-center h-full">
             <span
-              className="rounded-xl bg-neutral-900 text-warning-500 text-2xl h-full flex items-center px-3">{t("kitchen:labels.avgTime", {time: avgTime})}</span>
+              className="rounded-xl bg-primary-600 text-white text-2xl h-full flex items-center px-3">{t("kitchen:labels.avgTime", {time: avgTime})}</span>
           </div>
         </div>
         <div className="grid grid-cols-5 gap-5">
@@ -655,7 +655,7 @@ export const KitchenScreen = () => {
                 {allDishes.map((item, index) => (
                   <div className="flex justify-between text-2xl odd:bg-gray-200 p-3" key={index}>
                     <strong>{item[0]}</strong>
-                    <span className="bg-black text-warning-500 w-12 text-center">{item[1]}</span>
+                    <span className="bg-primary-600 text-white w-12 text-center">{item[1]}</span>
                   </div>
                 ))}
               </ScrollContainer>

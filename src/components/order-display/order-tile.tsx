@@ -17,7 +17,7 @@ export const OrderTile = ({ order, variant, celebrate = false }: Props) => {
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-2xl p-6 shadow-lg animate-in fade-in zoom-in-95 duration-300',
+        'flex flex-col items-center justify-center rounded-md p-6 shadow-sm animate-in fade-in zoom-in-95 duration-300',
         variant === 'ready'
           ? 'bg-success-100 text-success-900 border-2 border-success-300'
           : 'bg-warning-100 text-warning-900 border-2 border-warning-300',

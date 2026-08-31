@@ -371,7 +371,7 @@ export const MenuDishModifiers = (props: Props) => {
               </Swiper>
             )}
           </div>
-          <div className="col-span-2 bg-white p-3 rounded-3xl">
+          <div className="col-span-2 bg-white p-3 rounded-md">
             <Button
               variant="danger"
               onClick={() => {
