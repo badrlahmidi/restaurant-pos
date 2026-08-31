@@ -32,10 +32,13 @@ export function requireRefIds(
   });
 }
 
-export function parseImportBool(value: any): boolean {
+export function parseImportBool(value: any, defaultValue = false): boolean {
   if (typeof value === "boolean") return value;
   const s = String(value ?? "").trim().toLowerCase();
-  return ["true", "1", "yes", "y"].includes(s);
+  if (s === "") return defaultValue;
+  if (["true", "1", "yes", "y"].includes(s)) return true;
+  if (["false", "0", "no", "n"].includes(s)) return false;
+  return defaultValue;
 }
 
 export type TFunc = (key: string, options?: any) => string;

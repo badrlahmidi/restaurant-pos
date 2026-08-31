@@ -2,6 +2,7 @@ import {normalizeQueryDate, parseDateRangeWithPhrase, resolveNaturalDateRange} f
 import type {DateRangeFilter, DbClient} from "@/api/reports/shared/types.ts";
 import {getProductMix, getSalesSummary, getTopSellingDishes, getUnsoldProducts, listMenuItems} from "@/api/reports/sales";
 import {getDiscountSummary} from "@/api/reports/sales/discounts.ts";
+import {getTips} from "@/api/reports/sales/tips.ts";
 import {
   getHourlyProductSales,
   getOrderFinanceSummary,

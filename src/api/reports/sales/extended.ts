@@ -2,7 +2,7 @@ import {Tables} from "@/api/db/tables.ts";
 import type {Order} from "@/api/model/order.ts";
 import type {OrderVoid} from "@/api/model/order_void.ts";
 import {calculateOrderItemPrice} from "@/lib/cart.ts";
-import {recordIdToString} from "@/api/reports/shared/records.ts";
+import {recordIdToString, recordToString} from "@/api/reports/shared/records.ts";
 import {buildCreatedAtDateConditions, unwrapQueryResult} from "@/api/reports/shared/query.ts";
 import type {DateRangeFilter, DbClient} from "@/api/reports/shared/types.ts";
 import {getOrderTaxAmount} from "@/lib/tax-calculator.ts";

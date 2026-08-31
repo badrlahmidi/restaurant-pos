@@ -3,7 +3,7 @@ import {buildCreatedAtDateConditions, unwrapQueryResult} from "@/api/reports/sha
 import type {DateRangeFilter, DbClient} from "@/api/reports/shared/types.ts";
 import {recordIdToString} from "@/api/reports/shared/records.ts";
 import {safeNumber} from "@/lib/utils.ts";
-import {extrasTotal, itemsSubtotal} from "@/lib/inventory/purchase.totals.ts";
+import {extrasTotal, itemsSubtotal, type PurchaseTotalLine} from "@/lib/inventory/purchase.totals.ts";
 import type {InventoryDocumentType} from "@/lib/ai/inventory-operation-query.ts";
 import type {InventoryDocumentStatus} from "@/api/model/inventory_document.ts";
 
@@ -31,7 +31,7 @@ const personName = (row: {first_name?: string; last_name?: string; login?: strin
 
 const summarizeLines = (items: Array<{quantity?: unknown; price?: unknown}> | null | undefined) => ({
   itemCount: items?.length ?? 0,
-  totalAmount: itemsSubtotal(items ?? []),
+  totalAmount: itemsSubtotal((items ?? []) as PurchaseTotalLine[]),
 });
 
 const fetchDocuments = async (

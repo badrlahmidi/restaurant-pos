@@ -273,12 +273,14 @@ export const ScheduleTemplateForm = ({open, onClose, data}: Props) => {
                   <Input
                     type="number"
                     label={t("forms.scheduleTemplate.breakMinutes")}
-                    onChange={field.onChange}
-                    value={field.value}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      field.onChange(v === "" ? undefined : Number(v));
+                    }}
+                    value={field.value ?? ""}
                   />
                 )}
                 name="break_minutes"
-                rules={{valueAsNumber: true}}
                 control={control}
               />
 

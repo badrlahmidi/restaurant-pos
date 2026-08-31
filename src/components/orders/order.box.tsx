@@ -105,7 +105,7 @@ export const OrderBox = ({
 
   const {protectAction} = useSecurity();
 
-  const withFullOrder = async (run: (full: OrderModel) => void | Promise<void>) => {
+  const withFullOrder = async (run: (full: OrderModel) => unknown) => {
     setIsLoadingFull(true);
     try {
       const full = await fetchOrderFull(db, snapshot.id);

@@ -39,7 +39,7 @@ export class IntegrationStateRepository {
   }
 
   async getProviderStates(): Promise<InstalledProviderState[]> {
-    const [rows] = await this.db.query<InstalledProviderState[]>(
+    const [rows] = await this.db.query<[InstalledProviderState[]]>(
       `SELECT id, provider_id, enabled, updated_at FROM ${Tables.integration_installed_providers}`
     );
     return rows ?? [];

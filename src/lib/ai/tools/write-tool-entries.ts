@@ -159,7 +159,7 @@ const mergeKitchenUpdatePatches = async (
       items = normalizeLabelList(patch.items);
     }
 
-    const merged = {...base, items};
+    const merged: Record<string, unknown> = {...base, items};
     delete merged.items_add;
     delete merged.items_remove;
     return merged;

@@ -45,7 +45,7 @@ export function validateRecord(
         field: field.name,
         code: "required",
         severity: "error",
-        message: `"${field.label}" is required`,
+        message: `"${field.label ?? field.name}" is required`,
       });
       continue;
     }
@@ -65,7 +65,7 @@ export function validateRecord(
           field: field.name,
           code: "invalid_type",
           severity: "error",
-          message: `Invalid "${field.label}" "${str}". Expected one of: ${field.allowedValues.join(", ")}`,
+          message: `Invalid "${field.label ?? field.name}" "${str}". Expected one of: ${field.allowedValues.join(", ")}`,
         });
       }
     }

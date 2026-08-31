@@ -109,7 +109,7 @@ function useApi<T>(
     isFetching,
     error,
     refetch,
-  }: UseQueryResult<T> = useQuery({
+  } = useQuery({
     queryKey: queryKeys,
     queryFn: fetchFilteredData,
     enabled: isConnected && !!db && !!table && enabledOverride,
@@ -117,7 +117,7 @@ function useApi<T>(
     retry: false,
     gcTime: 0,
     ...restApiOptions,
-  });
+  }) as UseQueryResult<T>;
 
   const resetFilters = () => {
     setFilters(initialFilters);

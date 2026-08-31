@@ -208,7 +208,7 @@ describe("importSmartMenuBatch name isolation", () => {
       index: 0,
     });
 
-    expect(summary?.failed ?? []).toHaveLength(0);
+    expect((summary as {failed?: unknown[]} | undefined)?.failed ?? []).toHaveLength(0);
     expect(createdDishes.some((d) => d.name === "Chicken Tikka")).toBe(true);
     expect(relates.length).toBeGreaterThan(0);
     const pizza = createdDishes.find((d) => d.name === "Chicken Tikka");

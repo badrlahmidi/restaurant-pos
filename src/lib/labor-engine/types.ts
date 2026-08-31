@@ -12,7 +12,7 @@ import type { DateInput } from '@/lib/datetime.ts'
 
 export type DbClient = Pick<
   ReturnType<typeof useDB>,
-  'query' | 'create' | 'merge' | 'select'
+  'query' | 'create' | 'merge' | 'select' | 'delete'
 >
 
 export type HourBucketType = 'regular' | 'overtime' | 'double_time'
