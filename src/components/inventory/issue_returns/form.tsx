@@ -165,7 +165,6 @@ export const InventoryIssueReturnForm = ({open, onClose, data}: Props) => {
   const {
     control,
     register,
-    watch,
     handleSubmit,
     formState: {errors},
     reset,

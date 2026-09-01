@@ -177,7 +177,6 @@ export const InventoryIssueForm = ({open, onClose, data}: Props) => {
     formState: {errors},
     reset,
     setValue,
-    watch,
     setError,
     clearErrors,
     getValues,
@@ -209,7 +208,7 @@ export const InventoryIssueForm = ({open, onClose, data}: Props) => {
     return fetchNetQuantity(db, itemId, locationId);
   }, []);
 
-  const {fields, append, remove, replace, update} = useFieldArray({
+  const {fields, append, remove, update} = useFieldArray({
     control,
     name: "items"
   });

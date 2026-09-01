@@ -63,7 +63,6 @@ export const InventoryItemGroupForm = ({open, onClose, data}: Props) => {
 
   const {
     control,
-    register,
     handleSubmit,
     formState: {errors},
     reset,

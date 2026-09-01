@@ -24,7 +24,7 @@ interface Props<T extends DateValue> extends DatePickerProps<T> {
 }
 
 export function DatePicker<T extends DateValue>({
-  label, description, errorMessage, isClearable, ...props
+  label, description: _description, errorMessage: _errorMessage, isClearable, ...props
 }: Props<T>) {
   return (
     <>

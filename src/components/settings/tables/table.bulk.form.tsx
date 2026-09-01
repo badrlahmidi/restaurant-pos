@@ -77,7 +77,7 @@ export const TableBulkForm = ({
 
   const db = useDB();
 
-  const { control, handleSubmit, formState: {errors}, reset } = useForm({
+  const { control, handleSubmit, formState: {errors} } = useForm({
     resolver: yupResolver(validationSchema),
   });
 
