@@ -41,20 +41,33 @@ lands.
    > token is bound to the password, which the browser does not keep. Token
    > lifetime is set to 12h to match the gateway session, so this is rare.
 
-4. **Apply the table rules** on the canary's database:
+4. **Apply the table rules** on the canary's database, one section at a time.
+   `2026_09_01_rbac_permissions_optin.surql` is split into four sections by
+   blast radius:
+
+   | Section | Tables | Gate |
+   |---|---|---|
+   | 1 — config & closing | tax, discount, coupon, payment_type, day_closing, user_role | `admin.*`, `closing` |
+   | 2 — menu & floor | category, modifier_group, modifier, menu, floor, kitchen, order_type | `admin.*` |
+   | 3 — order money & mutations | order_payment, order_tax, order_discount, order_coupon, order_void, order_refund, order_split, order_merge | `orders.*` actions |
+   | 4 — pay & payroll | employee_pay_profile, labor_pay_rule, payroll_period, payroll_run | `hr.pay_*`, `hr.payroll_*` |
+
+   Comment out everything past the section you're testing, apply, roll to the
+   fleet, then uncomment the next:
 
    ```
    node migrations/scripts/apply-migration.cjs 2026_09_01_rbac_permissions_optin.surql
    ```
 
-   Re-test as a manager/admin (should be unchanged) and as a low-privilege
-   role (writes to `tax`/`discount`/`coupon`/`payment_type`/`day_closing`/
-   `user_role` should now be denied at the DB, not just hidden in the UI).
+   After each section, re-test as a manager/admin (unchanged) and as a
+   low-privilege role (the section's writes now denied at the DB, not just
+   hidden in the UI). Section 3 is the one to watch — a cashier still needs
+   `orders.apply_tax` / `orders.apply_discount` / `orders.complete_payment`
+   for a normal sale to persist.
 
-5. **Widen**: roll `GATEWAY_DB_AUTH_MODE=record` to the fleet, then extend
-   `rbac_permissions_optin.surql` one table family at a time
-   (`order_payment`, `order_void`, `order_refund`, inventory adjustments, …),
-   re-testing after each.
+5. **Widen further**: extend the migration with the next table families
+   (inventory adjustments/issues/wastes, accounting journal, `setting` —
+   which needs per-row rules, not a table rule), re-testing after each.
 
 ## Rollback
 
