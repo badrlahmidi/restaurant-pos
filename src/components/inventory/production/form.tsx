@@ -122,7 +122,7 @@ export const ProductionForm = ({open, onClose}: Props) => {
         Number(producedQty)
       );
       setPreview(result);
-    } catch (err) {
+    } catch {
       setPreview(null);
     } finally {
       setPreviewLoading(false);

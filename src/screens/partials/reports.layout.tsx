@@ -66,7 +66,6 @@ export const ReportsLayout = ({
   onRefresh,
   className,
 }: ReportsLayoutProps) => {
-  const { t } = useTranslation('reports');
   const { t: tNav } = useTranslation('navigation');
   const reportRef = useRef<HTMLDivElement>(null);
   const [generatedAt] = useState(DateTime.now().toFormat(import.meta.env.VITE_DATE_TIME_FORMAT));
@@ -278,41 +277,3 @@ function appendWorksheetAtRow(
   return target;
 }
 
-// Helper function to convert table to CSV
-function tableToCSV(table: HTMLTableElement): string {
-  const rows: string[] = [];
-  const trs = table.querySelectorAll("tr");
-
-  trs.forEach((tr) => {
-    const cells: string[] = [];
-    const tds = tr.querySelectorAll("td, th");
-
-    tds.forEach((td) => {
-      let text = td.textContent || "";
-      // Escape quotes and wrap in quotes if contains comma or quote
-      if (text.includes(",") || text.includes('"') || text.includes("\n")) {
-        text = `"${text.replace(/"/g, '""')}"`;
-      }
-      cells.push(text);
-    });
-
-    rows.push(cells.join(","));
-  });
-
-  return rows.join("\n");
-}
-
-// Helper function to download CSV
-function downloadCSV(csv: string, filename: string): void {
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-
-  link.setAttribute("href", url);
-  link.setAttribute("download", filename);
-  link.style.visibility = "hidden";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}

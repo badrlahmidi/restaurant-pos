@@ -47,7 +47,7 @@ export const DiscountPermissionMatrix = () => {
         }
         loadHook.fetchData()
         toast.success(t('discountEngine.permissions.policySaved'))
-      } catch (e) {
+      } catch {
         toast.error(t('discountEngine.errors.saveFailed'))
       }
     }, {

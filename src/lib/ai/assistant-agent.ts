@@ -74,9 +74,6 @@ const resolveToolset = (prompt: string, allowedModules: string[]): ResolvedTools
   return {tools, domains, compact};
 };
 
-const stripSystemMessages = (messages: OpenAIChatMessage[]): OpenAIChatMessage[] =>
-  messages.filter(message => message.role !== "system");
-
 const extractLastUserPrompt = (messages: OpenAIChatMessage[]): string => {
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i];

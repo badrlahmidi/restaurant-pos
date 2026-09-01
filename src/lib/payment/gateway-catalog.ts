@@ -29,16 +29,6 @@ export type GatewayDescriptor = {
   helpText?: string;
 };
 
-const DEFAULT_GATEWAY_FIELDS: GatewayFieldDescriptor[] = [
-  { configKey: "public_key", label: "Public Key" },
-  { configKey: "secret_key", label: "Secret Key", type: "password" },
-  { configKey: "webhook_secret", label: "Webhook Secret", type: "password" },
-  { configKey: "client_id", label: "Client ID" },
-  { configKey: "client_secret", label: "Client Secret", type: "password" },
-  { configKey: "merchant_id", label: "Merchant ID" },
-  { configKey: "integrity_salt", label: "Integrity Salt", type: "password" },
-];
-
 const MPESA_GATEWAY_FIELDS: GatewayFieldDescriptor[] = [
   { configKey: "client_id", label: "Consumer Key", required: true },
   { configKey: "client_secret", label: "Consumer Secret", type: "password", required: true },
