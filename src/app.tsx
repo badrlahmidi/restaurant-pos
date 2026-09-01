@@ -13,7 +13,6 @@ import {SecurityProvider} from "@/providers/security.provider.tsx";
 import {SecurityModal} from "@/components/security/security-modal.tsx";
 import {useDeliveryOrders} from "@/hooks/useDeliveryOrders.ts";
 import {DeliveryOrderPopup} from "@/components/delivery/delivery-order-popup.tsx";
-import {initializePrintTemplates} from "@/lib/print.registry.tsx";
 import {BrowserRouter} from "react-router";
 import {TableLockProvider} from "@/providers/table.lock.provider.tsx";
 import {AutoCheckCloseProvider} from "@/providers/auto-check-close.provider.tsx";

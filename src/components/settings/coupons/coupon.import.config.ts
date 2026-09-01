@@ -3,7 +3,6 @@ import type {ImportConfiguration, ImportDbLike, ImportField, ImportRecord} from 
 import {parseImportBool, type TFunc} from "@/lib/data-import/helpers.ts";
 import {assertCsvMatchValues, buildMatchConditions, findCsvImportMatches, writeCsvImportRow} from "@/utils/csv-import.ts";
 import {toRecordId} from "@/lib/utils.ts";
-import {recordToString} from "@/api/reports/shared/records.ts";
 
 const unwrapRows = <T>(result: unknown): T[] => {
   if (Array.isArray(result) && Array.isArray(result[0])) return result[0] as T[];

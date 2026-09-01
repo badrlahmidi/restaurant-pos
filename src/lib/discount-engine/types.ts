@@ -1,6 +1,5 @@
 import type { Discount, DiscountCategory, DiscountScope, DiscountValueType, StackingMode, TaxTreatment } from '@/api/model/discount.ts'
 import type { Customer } from '@/api/model/customer.ts'
-import type { OrderItem } from '@/api/model/order_item.ts'
 import type { OrderType } from '@/api/model/order_type.ts'
 import type { OrderDiscount } from '@/api/model/order_discount.ts'
 import type { User } from '@/api/model/user.ts'

@@ -1,7 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 import {Modal} from "@/components/common/react-aria/modal.tsx";
 import {Order as OrderModel, OrderStatus} from "@/api/model/order.ts";
-import {OrderItem} from "@/api/model/order_item.ts";
 import {Textarea} from "@/components/common/input/textarea.tsx";
 import {Button} from "@/components/common/input/button.tsx";
 import {Checkbox} from "@/components/common/input/checkbox.tsx";

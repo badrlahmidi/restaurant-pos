@@ -4,7 +4,7 @@ import type {DateRangeFilter, DbClient} from "@/api/reports/shared/types.ts";
 import {calculateOrderItemPrice} from "@/lib/cart.ts";
 import type {Order} from "@/api/model/order.ts";
 import type {OrderVoid} from "@/api/model/order_void.ts";
-import {getOrderFilteredItems, getOrderPaymentTotals} from "@/lib/order.ts";
+import { getOrderPaymentTotals} from "@/lib/order.ts";
 import {getOrderTaxAmount} from "@/lib/tax-calculator.ts";
 import {safeNumber} from "@/lib/utils.ts";
 import {toJsDate} from "@/lib/datetime.ts";

@@ -1,6 +1,6 @@
 import {Tables} from "@/api/db/tables.ts";
 import type {BuyXGetYCondition, DiscountSchedule, DiscountTargets} from "@/api/model/discount.ts";
-import {qualifyRecordId, recordIdToString} from "@/api/reports/shared/records.ts";
+import {qualifyRecordId} from "@/api/reports/shared/records.ts";
 import {DISCOUNT_CATEGORIES, STACKING_MODES, TAX_TREATMENTS} from "@/lib/discount-engine/types.ts";
 import type {ImportDbLike} from "@/lib/data-import/types.ts";
 

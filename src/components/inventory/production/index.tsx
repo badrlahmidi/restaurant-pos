@@ -1,7 +1,6 @@
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Button} from "@/components/common/input/button.tsx";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {ProductionForm} from "@/components/inventory/production/form.tsx";
 

@@ -19,7 +19,7 @@ import {InventoryItem} from "@/api/model/inventory_item.ts";
 import {User} from "@/api/model/user.ts";
 import {RecordId, StringRecordId} from "surrealdb";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faTrash} from "@fortawesome/free-solid-svg-icons";
+import { faTrash} from "@fortawesome/free-solid-svg-icons";
 import get from "lodash/get";
 import {useAtom} from "jotai";
 import {appPage} from "@/store/jotai.ts";

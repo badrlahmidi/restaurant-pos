@@ -5,7 +5,6 @@ import {
   IntegrationExecutionResponse,
   IntegrationHealthSnapshot,
   ProviderCapability,
-  ProviderConfigurationSchema,
 } from '@/integrations/core/types.ts';
 import { QBO_MANIFEST, QBO_SCHEMA } from '@/integrations/providers/accounting/quickbooks/manifest.ts';
 import { parseQuickBooksConfig, QuickBooksConfig } from '@/integrations/providers/accounting/quickbooks/config.ts';
@@ -18,12 +17,10 @@ import {
   AccountingRemoteAdapter,
   MasterDataImport,
   ChangeSet,
-  ExternalAccountingConfig,
 } from '@/integrations/accounting/external/types.ts';
 import { nowSurrealDateTime, toJsDate } from '@/lib/datetime.ts';
 import { Tables } from '@/api/db/tables.ts';
 import {
-  getConnectionStatus,
   proxyQboRequest,
   refreshToken,
 } from '@/integrations/providers/accounting/quickbooks/client-bridge.ts';

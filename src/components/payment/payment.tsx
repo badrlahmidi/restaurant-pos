@@ -1,5 +1,5 @@
 import {Button} from "@/components/common/input/button.tsx";
-import {faCancel, faCheck, faCreditCard, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faCancel, faCheck, faCreditCard} from "@fortawesome/free-solid-svg-icons";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {useAtom} from "jotai";
 import {appPage, appState, closingEnforcementAtom} from "@/store/jotai.ts";
@@ -27,7 +27,6 @@ import {toast} from "sonner";
 import {generateNextInvoiceNumber, getNextAutoId} from "@/lib/invoice.ts";
 import {postOrderTracking} from "@/lib/tracking.service.ts";
 import {createStageRows} from "@/lib/kitchen/workflow.service.ts";
-import {nowSurrealDateTime} from "@/lib/datetime.ts";
 import {useTranslation} from "react-i18next";
 import {DateTime} from "luxon";
 import {

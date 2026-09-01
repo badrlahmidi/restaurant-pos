@@ -4,7 +4,7 @@ import {calculateOrderItemPrice} from "@/lib/cart.ts";
 import {getOrderTaxAmount, getOrdersTaxBreakdown} from "@/lib/tax-calculator.ts";
 import {Order, OrderStatus} from "@/api/model/order.ts";
 import {formatNumber, withCurrency} from "@/lib/utils.ts";
-import {getOrderFilteredItems, getOrderPaymentTotals, getOrderRounding, getOrderSettlementFigures} from "@/lib/order.ts";
+import {getOrderFilteredItems, getOrderPaymentTotals, getOrderRounding} from "@/lib/order.ts";
 
 interface Props {
   orders: Order[]

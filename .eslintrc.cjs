@@ -12,15 +12,28 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'unused-imports'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
-    // Off for now — tsc's noUnusedParameters already blocks in CI. Next ratchet:
-    // "warn" with { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }.
+    // Unused imports are always safe to strip and are auto-fixable, so they are
+    // an error (CI-blocking). Unused locals/params are surfaced as warnings;
+    // `_`-prefixed names are intentional. Next ratchet: no-unused-vars -> error.
     "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        vars: "all",
+        varsIgnorePattern: "^_",
+        args: "after-used",
+        argsIgnorePattern: "^_",
+        caughtErrors: "all",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
     // ~1000 occurrences; a dedicated cleanup, then flip to "warn".
     "@typescript-eslint/no-explicit-any": "off",
     "no-useless-catch": "off",

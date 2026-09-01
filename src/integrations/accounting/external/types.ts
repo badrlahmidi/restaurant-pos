@@ -1,5 +1,4 @@
 import { LogicalAccountCode } from '@/integrations/accounting/types.ts';
-import { IntegrationExecutionRequest } from '@/integrations/core/types.ts';
 
 /** Provider-agnostic external accounting configuration. */
 export interface ExternalAccountingConfig {

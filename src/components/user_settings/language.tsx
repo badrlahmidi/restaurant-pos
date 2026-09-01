@@ -8,7 +8,6 @@ import {
   SUPPORTED_LANGUAGES,
   TEXT_DIRECTIONS,
 } from '@/lib/languages.ts';
-import { cn } from '@/lib/utils.ts';
 import {Button} from "@/components/common/input/button.tsx";
 
 export const LanguageSettings = () => {

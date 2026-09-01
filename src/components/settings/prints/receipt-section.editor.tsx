@@ -7,7 +7,7 @@ import {Switch} from "@/components/common/input/switch.tsx";
 import {Input} from "@/components/common/input/input.tsx";
 import {Button} from "@/components/common/input/button.tsx";
 import {DeleteConfirm} from "@/components/common/table/delete.confirm.tsx";
-import {emptyReceiptSection, ReceiptSection} from "@/api/model/receipt-section.ts";
+import {emptyReceiptSection} from "@/api/model/receipt-section.ts";
 import {detectMimeType, toArrayBuffer} from "@/utils/files.ts";
 
 interface Props {

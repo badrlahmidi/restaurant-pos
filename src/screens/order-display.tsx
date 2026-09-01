@@ -11,7 +11,7 @@ import { useAtom } from 'jotai';
 import { appState, AppStateInterface } from '@/store/jotai.ts';
 import { LabelValue } from '@/api/model/common.ts';
 import { Button } from '@/components/common/input/button.tsx';
-import { toSurrealDateTime, getAppStartOfDaySurreal } from '@/lib/datetime.ts';
+import { getAppStartOfDaySurreal } from '@/lib/datetime.ts';
 import { useTranslation } from 'react-i18next';
 import { translateOrderStatus } from '@/lib/order.ts';
 import {

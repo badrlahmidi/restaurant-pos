@@ -20,7 +20,7 @@ import { getOrderTaxAmount } from "@/lib/tax-calculator.ts";
 import { getOrderFilteredItems } from "@/lib/order.ts";
 import { toRecordId, withCurrency } from "@/lib/utils.ts";
 import type { UserShift } from "@/api/model/user.ts";
-import { nowSurrealDateTime, toJsDate, toLuxonDateTime } from "@/lib/datetime.ts";
+import { toJsDate, toLuxonDateTime } from "@/lib/datetime.ts";
 import { clockOut as laborClockOut } from "@/lib/labor-engine/attendance/attendance.service.ts";
 import {useTranslation} from "react-i18next";
 import {DocumentTitle} from "@/components/common/document-title.tsx";

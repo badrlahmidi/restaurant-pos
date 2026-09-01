@@ -6,7 +6,7 @@ import type {
   ImportRecord,
   ResolvedReference,
 } from "@/lib/data-import/types.ts";
-import {requireRefId, type TFunc} from "@/lib/data-import/helpers.ts";
+import { type TFunc} from "@/lib/data-import/helpers.ts";
 import {toRecordId} from "@/lib/utils.ts";
 import {
   assertCsvMatchValues,

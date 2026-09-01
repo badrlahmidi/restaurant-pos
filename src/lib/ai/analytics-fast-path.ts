@@ -28,7 +28,6 @@ import {
   isStaffAccountabilityPrompt,
   isVoidCancelSummaryPrompt,
   isPromotionalDiscountPrompt,
-  resolveAnalyticsToolName,
   resolvePromptDateRange,
 } from "@/lib/ai/analytics-query.ts";
 

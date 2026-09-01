@@ -5,7 +5,7 @@ import i18n from "@/lib/i18n.ts";
 import { authHeaders } from "@/lib/session.ts";
 import { Tables } from "@/api/db/tables.ts";
 import type { Printer } from "@/api/model/printer.ts";
-import {RecordId, StringRecordId} from "surrealdb";
+import { StringRecordId} from "surrealdb";
 import { fetchShowInclusivePricesEnabled } from "@/hooks/useShowInclusivePrices.ts";
 import { fetchTranslateReceiptsEnabled } from "@/hooks/useTranslateReceipts.ts";
 import { fetchCurrencySymbolSettings } from "@/hooks/useCurrencySymbol.ts";

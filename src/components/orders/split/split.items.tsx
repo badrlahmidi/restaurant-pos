@@ -10,7 +10,7 @@ import {faArrowLeft, faCheck, faPlus, faTrash} from "@fortawesome/free-solid-svg
 import {useDB} from "@/api/db/db.ts";
 import {Tables} from "@/api/db/tables.ts";
 import {toast} from "sonner";
-import {RecordId, StringRecordId} from "surrealdb";
+import {RecordId} from "surrealdb";
 import ScrollContainer from "react-indiana-drag-scroll";
 import {nanoid} from "nanoid";
 import {getInvoiceNumber, getOrderFilteredItems} from "@/lib/order.ts";

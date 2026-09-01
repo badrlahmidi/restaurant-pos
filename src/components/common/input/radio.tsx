@@ -1,4 +1,4 @@
-import {HTMLProps, useEffect, useRef} from "react";
+import {HTMLProps, useRef} from "react";
 import { cn } from "@/lib/utils.ts";
 import {nanoid} from "nanoid";
 

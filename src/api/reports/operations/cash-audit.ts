@@ -5,7 +5,6 @@ import type {DateRangeFilter, DbClient} from "@/api/reports/shared/types.ts";
 import {recordIdToString} from "@/api/reports/shared/records.ts";
 import {toJsDate} from "@/lib/datetime.ts";
 import {getOrderPaymentTotals} from "@/lib/order.ts";
-import {safeNumber} from "@/lib/utils.ts";
 
 const isCashPayment = (type?: string, name?: string): boolean => {
   const normalizedType = type?.toLowerCase()?.trim() ?? "";

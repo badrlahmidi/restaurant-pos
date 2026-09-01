@@ -11,7 +11,7 @@ import {useDB} from "@/api/db/db.ts";
 import {Order, OrderStatus} from "@/api/model/order.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChair} from "@fortawesome/free-solid-svg-icons";
-import {ne, LiveSubscription} from "surrealdb";
+import { LiveSubscription} from "surrealdb";
 import {nowSurrealDateTime} from "@/lib/datetime.ts";
 import {postOrderTracking} from "@/lib/tracking.service.ts";
 import {getClosingEnforcementState} from "@/lib/closing.guard.ts";

@@ -8,7 +8,7 @@ import { useDB } from "@/api/db/db.ts";
 import { Tables } from "@/api/db/tables.ts";
 import { Shift } from "@/api/model/shift.ts";
 import { User } from "@/api/model/user.ts";
-import { Order, OrderStatus } from "@/api/model/order.ts";
+import { OrderStatus } from "@/api/model/order.ts";
 import { Setting } from "@/api/model/setting.ts";
 import { Button } from "@/components/common/input/button.tsx";
 import { ReactSelect } from "@/components/common/input/custom.react.select.tsx";

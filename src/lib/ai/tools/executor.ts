@@ -63,7 +63,7 @@ import type {InventoryDocumentStatus} from "@/api/model/inventory_document.ts";
 import type {InventoryDocumentType} from "@/lib/ai/inventory-operation-query.ts";
 import {getOrders} from "@/api/reports/operations/orders.ts";
 import {getOrderDetail} from "@/api/reports/operations/order-detail.ts";
-import {extractOrderStatusesFromArgs, inferOrderStatusesFromPrompt, isOrderListByStatusPrompt} from "@/lib/ai/order-query.ts";
+import {extractOrderStatusesFromArgs} from "@/lib/ai/order-query.ts";
 import {
   getActivityLog,
   getCashClosing,

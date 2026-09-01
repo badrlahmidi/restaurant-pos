@@ -7,7 +7,7 @@ import { Menu } from "@/api/model/menu.ts";
 import { toast } from 'sonner';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useMemo,  useEffect } from "react";
+import React, {  useEffect } from "react";
 import { Switch } from "@/components/common/input/switch.tsx";
 import {useTranslation} from 'react-i18next';
 import i18n from '@/lib/i18n.ts';

@@ -3,7 +3,6 @@ import React, {CSSProperties, useCallback, useEffect, useMemo, useState} from "r
 import { useMove } from 'react-aria';
 import { cn, withCurrency } from "@/lib/utils.ts";
 import { useDB } from "@/api/db/db.ts";
-import { Button } from "@/components/common/input/button.tsx";
 import { IconTooltipButton } from "@/components/common/input/icon.tooltip.button.tsx";
 import { Popover } from "@/components/common/react-aria/popover.tsx";
 import { DialogTrigger } from "react-aria-components";

@@ -8,7 +8,7 @@ import { Tables } from "@/api/db/tables.ts";
 import { toast } from 'sonner';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMemo,  useEffect  } from "react";
+import {  useEffect  } from "react";
 import {useTranslation} from 'react-i18next';
 import i18n from '@/lib/i18n.ts';
 import { Tax } from "@/api/model/tax.ts";

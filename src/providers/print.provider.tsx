@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {createRoot} from "react-dom/client";
 import {getPrintTemplate, PRINT_EVENT, PrintEventDetail} from "@/lib/print.service.ts";
 

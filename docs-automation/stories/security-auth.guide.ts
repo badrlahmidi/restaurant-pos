@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { clearHighlights, highlightAndReady } from '../helpers/highlight.ts';
 import { loginWithPin, openSettings, resetSession } from '../helpers/auth.ts';
-import { captureLocator, capturePage } from '../helpers/screenshot.ts';
+import { captureLocator } from '../helpers/screenshot.ts';
 
 test.describe.configure({ mode: 'serial' });
 

@@ -7,7 +7,6 @@ import { appState } from "@/store/jotai.ts";
 import {Customer} from "@/api/model/customer.ts";
 import {useDB} from "@/api/db/db.ts";
 import {Tables} from "@/api/db/tables.ts";
-import {Checkbox} from "@/components/common/input/checkbox.tsx";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 

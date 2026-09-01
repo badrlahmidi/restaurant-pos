@@ -1,6 +1,6 @@
 import { AccountingRemoteAdapter, EntityMapping, SyncFailure, SyncMode, SyncRun, SyncRunStatus } from '@/integrations/accounting/external/types.ts';
 import { EntityMappingRepository } from '@/integrations/accounting/external/entity-mapping-repository.ts';
-import { categorizeExternalError, formatSyncFailure, isRetriableExternalError } from '@/integrations/accounting/external/errors.ts';
+import { categorizeExternalError, isRetriableExternalError } from '@/integrations/accounting/external/errors.ts';
 import { nowSurrealDateTime } from '@/lib/datetime.ts';
 
 export type SyncOrchDbClient = {
