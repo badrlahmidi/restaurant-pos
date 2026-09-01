@@ -28,6 +28,7 @@ import {ClosingCycleWindow, loadClosingCycleConfig} from "@/lib/closing-cycle.ts
 import {computeLine} from "@/lib/kitchen/reconciliation.calculations.ts";
 import {nowSurrealDateTime, toJsDate, toSurrealDateTime} from "@/lib/datetime.ts";
 import {safeNumber} from "@/lib/utils.ts";
+import {runWriteTransaction, type TxStatement} from "@/lib/db-transaction.ts";
 import {fetchNextSequentialNumber} from "@/utils/recordNumbers.ts";
 import {postDocument} from "@/lib/inventory/posting.service.ts";
 import {toLocationRecordId} from "@/lib/inventory/location.service.ts";
@@ -1139,26 +1140,6 @@ const upsertManualTables = async (
     .map((line) => toInventoryItemRecordId(line.itemId))
     .filter(Boolean);
 
-  // Only clear/reinsert rows for lines being saved — never wipe the whole recon.
-  await Promise.all([
-    db.query(
-      `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-  ]);
-
   const stockRows: Array<Record<string, unknown>> = [];
   const wasteRows: Array<Record<string, unknown>> = [];
   const staffRows: Array<Record<string, unknown>> = [];
@@ -1205,18 +1186,36 @@ const upsertManualTables = async (
     }
   }
 
-  const insertChunks = async (table: Tables, rows: Array<Record<string, unknown>>) => {
-    if (rows.length === 0) return;
+  // Clear + reinsert only the lines being saved (never the whole recon), as one
+  // transaction so a dropped connection can't drop the counts without replacing
+  // them. INSERTs stay chunked (large single INSERTs hang) — chunked statements
+  // inside one BEGIN…COMMIT are still atomic.
+  const statements: TxStatement[] = [
+    {
+      sql: `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`,
+      vars: {sml_rec: reconciliation, sml_items: items},
+    },
+    {sql: `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`},
+  ];
+
+  let chunkIndex = 0;
+  const pushInsertChunks = (table: Tables, rows: Array<Record<string, unknown>>) => {
     for (let i = 0; i < rows.length; i += LINE_INSERT_CHUNK) {
-      const chunk = rows.slice(i, i + LINE_INSERT_CHUNK);
-      await db.query(`INSERT INTO ${table} $rows RETURN NONE`, {rows: chunk});
+      const key = `sml_rows_${chunkIndex++}`;
+      statements.push({
+        sql: `INSERT INTO ${table} $${key} RETURN NONE`,
+        vars: {[key]: rows.slice(i, i + LINE_INSERT_CHUNK)},
+      });
     }
   };
+  pushInsertChunks(Tables.kitchen_stock_counts, stockRows);
+  pushInsertChunks(Tables.kitchen_wastes, wasteRows);
+  pushInsertChunks(Tables.kitchen_staff_meals, staffRows);
+  pushInsertChunks(Tables.kitchen_complimentary_items, complimentaryRows);
 
-  await insertChunks(Tables.kitchen_stock_counts, stockRows);
-  await insertChunks(Tables.kitchen_wastes, wasteRows);
-  await insertChunks(Tables.kitchen_staff_meals, staffRows);
-  await insertChunks(Tables.kitchen_complimentary_items, complimentaryRows);
+  await runWriteTransaction(db, statements);
 
   if (stockRows.length > 0) {
     await publishStockCountCompleted(undefined, {
@@ -1630,33 +1629,23 @@ export const discardDraftReconciliation = async (
   }
 
   const recId = toReconciliationRecordId(id);
-  // Chunked item wipe — bulk DELETE … WHERE hangs on large drafts.
+  // Chunked item wipe — bulk DELETE … WHERE hangs on large drafts. Kept outside
+  // the transaction below (chunked + idempotent); a re-run of discard re-does it.
   await deleteLineItemsByReconciliation(db, id);
+  // The child-table wipes + header delete run as one transaction so a dropped
+  // connection can't leave a half-discarded reconciliation.
   // RETURN NONE — default DELETE returns every deleted row over the websocket and hangs.
-  await Promise.all([
-    db.query(
-      `DELETE ${Tables.kitchen_reconciliation_revisions} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
+  await runWriteTransaction(db, [
+    {
+      sql: `DELETE ${Tables.kitchen_reconciliation_revisions} WHERE reconciliation = $disc_rec_id RETURN NONE`,
+      vars: {disc_rec_id: recId},
+    },
+    {sql: `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE $disc_rec_id RETURN NONE`},
   ]);
-
-  await db.delete(recId);
 
   return generateReconciliation(db, locationId, businessDate, userId, onProgress);
 };
