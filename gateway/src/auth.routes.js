@@ -3,7 +3,7 @@
 const express = require('express');
 const { authenticatePosUser } = require('./auth.service');
 const { signSession, verifySession, revokeSession, extractBearer } = require('./jwt');
-const { issueSurrealAccessToken } = require('./surreal-client');
+const { issueSurrealAccessToken, DB_AUTH_MODE } = require('./surreal-client');
 const { checkLogin, recordFailure, recordSuccess } = require('./login-throttle');
 
 const router = express.Router();
@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
 
     let surrealToken = null;
     try {
-      surrealToken = await issueSurrealAccessToken();
+      surrealToken = await issueSurrealAccessToken({ method, login, password });
     } catch (err) {
       console.error('Failed to issue Surreal access token', err);
       return res.status(503).json({
@@ -107,6 +107,15 @@ router.post('/logout', async (req, res) => {
 router.post('/db-token', async (req, res) => {
   try {
     await verifySession(extractBearer(req));
+    if (DB_AUTH_MODE === 'record') {
+      // A record-scoped token is bound to the user's password, which the
+      // browser does not keep. The client must log in again.
+      return res.status(409).json({
+        ok: false,
+        code: 'RELOGIN_REQUIRED',
+        error: 'Database token cannot be refreshed in record auth mode — please log in again.',
+      });
+    }
     const surrealToken = await issueSurrealAccessToken();
     return res.json({ ok: true, surrealToken });
   } catch (err) {
