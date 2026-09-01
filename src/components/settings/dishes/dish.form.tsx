@@ -7,7 +7,7 @@ import { IconTooltipButton } from "@/components/common/input/icon.tooltip.button
 import {Controller, useFieldArray, useForm, useWatch} from "react-hook-form";
 import {ReactSelect} from "@/components/common/input/custom.react.select.tsx";
 import {useDB} from "@/api/db/db.ts";
-import React, { useMemo, useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState} from "react";
 import {Tables} from "@/api/db/tables.ts";
 import {Category} from "@/api/model/category.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

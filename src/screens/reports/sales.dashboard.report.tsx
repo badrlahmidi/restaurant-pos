@@ -8,7 +8,6 @@ import {parseDateRangeFromParams} from "@/api/reports/shared/filters.ts";
 import {aggregateTopSellingDishes, fetchDashboardOrders, getOrderFigures} from "@/api/reports/sales";
 import {Tracking} from "@/api/model/tracking.ts";
 import {withCurrency, formatNumber} from "@/lib/utils.ts";
-import {calculateOrderItemPrice} from "@/lib/cart.ts";
 import {ResponsiveLine} from "@nivo/line";
 import {ResponsivePie} from "@nivo/pie";
 import {DateTime} from "luxon";
@@ -33,7 +32,7 @@ import {Tab, TabPanel} from "@/components/common/react-aria/tabs.tsx";
 import { toJsDate, toLuxonDateTime } from "@/lib/datetime.ts";
 import {DAY_PARTS, getDayPartLabel, getDayPartTimeRangeLabel, type DayPartLabel} from "@/utils/dayParts";
 import {getOrderFilteredItems, getOrderPaymentTotals} from "@/lib/order.ts";
-import {detectBrowser, detectOS, displayValue} from "@/screens/reports/activity.report.tsx";
+import {detectBrowser, displayValue} from "@/screens/reports/activity.report.tsx";
 
 const faIcon = (icon: IconDefinition) =>
   ({className}: {className?: string}) => <FontAwesomeIcon icon={icon} className={className} />;

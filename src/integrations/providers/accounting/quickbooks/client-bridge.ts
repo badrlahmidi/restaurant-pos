@@ -4,7 +4,6 @@
  */
 
 import { getSessionToken } from '@/lib/session.ts';
-import { MasterDataImport, AccountingRemoteAdapter, ChangeSet } from '@/integrations/accounting/external/types.ts';
 
 const API_BASE = import.meta.env.VITE_API_SERVER_URL + '/integrations/qbo';
 

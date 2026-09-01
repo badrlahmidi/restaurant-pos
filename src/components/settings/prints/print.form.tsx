@@ -1,5 +1,4 @@
 import {useDB} from "@/api/db/db.ts";
-import {Tables} from "@/api/db/tables.ts";
 import {toast} from "sonner";
 import {useTranslation} from 'react-i18next';
 import {Modal} from "@/components/common/react-aria/modal.tsx";

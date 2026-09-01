@@ -16,12 +16,21 @@ const path = require('node:path');
 
 const MODULE_PATH = path.join(__dirname, 'surreal-client.js');
 
+const BASE_ENV = { SURREAL_USER: 'realuser', SURREAL_PASS: 'realpass' };
+
 function runInChildProcess(env) {
   return execFileSync(
     process.execPath,
     ['-e', `require(${JSON.stringify(MODULE_PATH)}); console.log('loaded-ok');`],
     { env: { ...process.env, ...env }, encoding: 'utf8' }
   );
+}
+
+function evalInChild(script, env) {
+  return execFileSync(process.execPath, ['-e', script], {
+    env: { ...process.env, ...BASE_ENV, ...env },
+    encoding: 'utf8',
+  }).trim();
 }
 
 test('throws at load time when SURREAL_USER/SURREAL_PASS are unset — no root/root fallback', () => {
@@ -53,4 +62,33 @@ test('loads with root/root — existing datastores keep the original root user',
 test('loads successfully once both are configured with real values', () => {
   const out = runInChildProcess({ SURREAL_USER: 'realuser', SURREAL_PASS: 'realpass' });
   assert.match(out, /loaded-ok/);
+});
+
+// --- DB auth mode (service vs record) ---
+
+const PRINT_MODE = `process.stdout.write(require(${JSON.stringify(MODULE_PATH)}).DB_AUTH_MODE)`;
+
+test('DB_AUTH_MODE defaults to service', () => {
+  assert.equal(evalInChild(PRINT_MODE, {}), 'service');
+});
+
+test('GATEWAY_DB_AUTH_MODE=record selects record mode (case-insensitive)', () => {
+  assert.equal(evalInChild(PRINT_MODE, { GATEWAY_DB_AUTH_MODE: 'record' }), 'record');
+  assert.equal(evalInChild(PRINT_MODE, { GATEWAY_DB_AUTH_MODE: 'RECORD' }), 'record');
+});
+
+test('an unrecognised GATEWAY_DB_AUTH_MODE falls back to service', () => {
+  assert.equal(evalInChild(PRINT_MODE, { GATEWAY_DB_AUTH_MODE: 'nonsense' }), 'service');
+});
+
+test('issueSurrealAccessToken rejects a credential-less call in record mode (before any DB hit)', () => {
+  const script = `
+    const { issueSurrealAccessToken } = require(${JSON.stringify(MODULE_PATH)});
+    issueSurrealAccessToken().then(
+      () => process.stdout.write('resolved'),
+      (e) => process.stdout.write('rejected:' + e.message)
+    );
+  `;
+  const out = evalInChild(script, { GATEWAY_DB_AUTH_MODE: 'record' });
+  assert.match(out, /^rejected:record auth mode requires login credentials/);
 });

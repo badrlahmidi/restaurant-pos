@@ -1,6 +1,6 @@
 import { AccountingRemoteAdapter, EntityMapping, SyncFailure, SyncMode, SyncRun, SyncRunStatus } from '@/integrations/accounting/external/types.ts';
 import { EntityMappingRepository } from '@/integrations/accounting/external/entity-mapping-repository.ts';
-import { categorizeExternalError, formatSyncFailure, isRetriableExternalError } from '@/integrations/accounting/external/errors.ts';
+import { categorizeExternalError, isRetriableExternalError } from '@/integrations/accounting/external/errors.ts';
 import { nowSurrealDateTime } from '@/lib/datetime.ts';
 
 export type SyncOrchDbClient = {
@@ -23,7 +23,7 @@ export class SyncOrchestrator {
       tenantId,
       mode,
       status: 'running',
-      startedAt: nowSurrealDateTime(),
+      startedAt: new Date().toISOString(),
     };
 
     const result = await this.db.create('integration_sync_run', {
@@ -231,7 +231,7 @@ export class SyncOrchestrator {
    * Retry failed records.
    */
   async retryFailed(tenantId: string): Promise<{ retried: number; failed: number }> {
-    const [rows] = await this.db.query<Array<{ id: string } & SyncFailure>>(
+    const [rows] = await this.db.query<[Array<{ id: string } & SyncFailure>]>(
       `SELECT * FROM integration_sync_failure
        WHERE provider_id = $providerId AND tenant_id = $tenantId
          AND retriable = true
@@ -247,7 +247,7 @@ export class SyncOrchestrator {
       try {
         // Re-enqueue for retry — the provider's execute method handles this
         await this.db.merge(row.id, {
-          retry_count: (row.retry_count ?? 0) + 1,
+          retry_count: ((row as {retry_count?: number}).retry_count ?? 0) + 1,
           retriable: false, // Mark non-retriable until re-evaluated on next run
         });
         retried++;

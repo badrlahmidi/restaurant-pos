@@ -19,15 +19,6 @@ import {StringRecordId} from "surrealdb";
 import get from "lodash/get";
 import { IconTooltipButton } from "@/components/common/input/icon.tooltip.button.tsx";
 
-interface InventoryItemGroupFormValues {
-  main_item: { label: string; value: string } | null;
-  base_quantity: number;
-  sub_items: Array<{
-    item: { label: string; value: string } | null;
-    base_quantity: number | string;
-  }>;
-}
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -63,7 +54,6 @@ export const InventoryItemGroupForm = ({open, onClose, data}: Props) => {
 
   const {
     control,
-    register,
     handleSubmit,
     formState: {errors},
     reset,

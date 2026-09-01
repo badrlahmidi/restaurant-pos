@@ -14,9 +14,7 @@ import {
   fetchLedgerNetsByStore,
 } from "@/lib/inventory/ledger.service.ts";
 import {
-  getIssuanceSummary,
   getRecipeConsumptionSummary,
-  getRecipeConsumptionTimeSeries,
   getSaleVsConsumptionReport,
 } from "@/api/reports/inventory/consumption.ts";
 

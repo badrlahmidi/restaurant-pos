@@ -18,7 +18,6 @@ import {calculateOrderTotal} from "@/lib/cart.ts";
 import {getInvoiceNumber, getOrderFilteredItems} from "@/lib/order.ts";
 import {useDB} from "@/api/db/db.ts";
 import {toast} from "sonner";
-import {DateTime} from "luxon";
 import {useDeliveryOrders} from "@/hooks/useDeliveryOrders.ts";
 import {OrderItemName} from "@/components/common/order/order.item.tsx";
 import {OrderPayment} from "@/components/orders/order.payment.tsx";
@@ -43,7 +42,7 @@ export const DeliveryOrderPopup: React.FC<DeliveryOrderPopupProps> = ({
 }) => {
   const { t } = useTranslation('delivery');
   const db = useDB();
-  const {deliveryOrders, openOrderPopup, selectedOrder: contextSelectedOrder, isPopupOpen} = useDeliveryOrders();
+  const {deliveryOrders, openOrderPopup, selectedOrder: contextSelectedOrder} = useDeliveryOrders();
   const [riders, setRiders] = useState<User[]>([]);
   const [loadingRiders, setLoadingRiders] = useState(false);
   const [selectedRider, setSelectedRider] = useState<User | null>(null);

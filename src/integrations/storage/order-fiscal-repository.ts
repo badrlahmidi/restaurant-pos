@@ -62,7 +62,7 @@ export const listOrderFiscalSubmissions = async (
   db: FiscalSubmissionDbClient,
   orderId: unknown
 ): Promise<OrderFiscalSubmission[]> => {
-  const [rows] = await db.query<OrderFiscalSubmission[]>(
+  const [rows] = await db.query<[OrderFiscalSubmission[]]>(
     `SELECT * FROM ${Tables.integration_order_fiscals}
      WHERE order = $orderId
      ORDER BY submitted_at DESC`,

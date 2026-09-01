@@ -2,6 +2,7 @@ import {normalizeQueryDate, parseDateRangeWithPhrase, resolveNaturalDateRange} f
 import type {DateRangeFilter, DbClient} from "@/api/reports/shared/types.ts";
 import {getProductMix, getSalesSummary, getTopSellingDishes, getUnsoldProducts, listMenuItems} from "@/api/reports/sales";
 import {getDiscountSummary} from "@/api/reports/sales/discounts.ts";
+import {getTips} from "@/api/reports/sales/tips.ts";
 import {
   getHourlyProductSales,
   getOrderFinanceSummary,
@@ -62,7 +63,7 @@ import type {InventoryDocumentStatus} from "@/api/model/inventory_document.ts";
 import type {InventoryDocumentType} from "@/lib/ai/inventory-operation-query.ts";
 import {getOrders} from "@/api/reports/operations/orders.ts";
 import {getOrderDetail} from "@/api/reports/operations/order-detail.ts";
-import {extractOrderStatusesFromArgs, inferOrderStatusesFromPrompt, isOrderListByStatusPrompt} from "@/lib/ai/order-query.ts";
+import {extractOrderStatusesFromArgs} from "@/lib/ai/order-query.ts";
 import {
   getActivityLog,
   getCashClosing,

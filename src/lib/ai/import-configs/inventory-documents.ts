@@ -77,7 +77,7 @@ export function createAiPurchaseImportConfig({
 
       const invoiceNumber = await fetchNextSequentialNumber(db as any, Tables.inventory_purchases, "invoice_number");
 
-      const [purchase] = await db.create?.(Tables.inventory_purchases, {
+      const [purchase] = await db.create(Tables.inventory_purchases, {
         invoice_number: invoiceNumber,
         method: "manual",
         comments: v.comments ? String(v.comments) : undefined,
@@ -92,7 +92,7 @@ export function createAiPurchaseImportConfig({
       const purchaseId = purchase?.id;
       if (!purchaseId) throw new Error("Failed to create purchase");
 
-      const [line] = await db.create?.(Tables.inventory_purchase_items, {
+      const [line] = await db.create(Tables.inventory_purchase_items, {
         purchase: toRecordId(purchaseId),
         item: toRecordId(item.id),
         location: toRecordId(locationId),
@@ -161,7 +161,7 @@ export function createAiWasteImportConfig({
 
       const invoiceNumber = await fetchNextSequentialNumber(db as any, Tables.inventory_wastes, "invoice_number");
 
-      const [waste] = await db.create?.(Tables.inventory_wastes, {
+      const [waste] = await db.create(Tables.inventory_wastes, {
         invoice_number: invoiceNumber,
         items: [],
         status: "draft",
@@ -171,7 +171,7 @@ export function createAiWasteImportConfig({
       const wasteId = waste?.id;
       if (!wasteId) throw new Error("Failed to create waste");
 
-      const [line] = await db.create?.(Tables.inventory_waste_items, {
+      const [line] = await db.create(Tables.inventory_waste_items, {
         waste: toRecordId(wasteId),
         item: toRecordId(item.id),
         location: toRecordId(locationId),
@@ -237,7 +237,7 @@ export function createAiIssueImportConfig({
 
       const invoiceNumber = await fetchNextSequentialNumber(db as any, Tables.inventory_issues, "invoice_number");
 
-      const [issue] = await db.create?.(Tables.inventory_issues, {
+      const [issue] = await db.create(Tables.inventory_issues, {
         invoice_number: invoiceNumber,
         location: toRecordId(locationId),
         items: [],
@@ -248,7 +248,7 @@ export function createAiIssueImportConfig({
       const issueId = issue?.id;
       if (!issueId) throw new Error("Failed to create issue");
 
-      const [line] = await db.create?.(Tables.inventory_issue_items, {
+      const [line] = await db.create(Tables.inventory_issue_items, {
         issue: toRecordId(issueId),
         item: toRecordId(item.id),
         location: toRecordId(locationId),
@@ -314,7 +314,7 @@ export function createAiAdjustmentImportConfig({
 
       const invoiceNumber = await fetchNextSequentialNumber(db as any, Tables.inventory_adjustments, "invoice_number");
 
-      const [adjustment] = await db.create?.(Tables.inventory_adjustments, {
+      const [adjustment] = await db.create(Tables.inventory_adjustments, {
         invoice_number: invoiceNumber,
         items: [],
         status: "draft",
@@ -324,7 +324,7 @@ export function createAiAdjustmentImportConfig({
       const adjustmentId = adjustment?.id;
       if (!adjustmentId) throw new Error("Failed to create adjustment");
 
-      const [line] = await db.create?.(Tables.inventory_adjustment_items, {
+      const [line] = await db.create(Tables.inventory_adjustment_items, {
         adjustment: toRecordId(adjustmentId),
         item: toRecordId(item.id),
         location: toRecordId(locationId),

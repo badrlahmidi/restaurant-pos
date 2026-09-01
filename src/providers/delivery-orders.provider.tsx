@@ -43,7 +43,7 @@ export const DeliveryOrdersProvider: React.FC<DeliveryOrdersProviderProps> = ({ 
   });
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [liveQuery, setLiveQuery] = useState<LiveSubscription | null>(null);
+  const [, setLiveQuery] = useState<LiveSubscription | null>(null);
   const processedOrderIdsRef = useRef<Set<string>>(new Set());
   const initialLoadDoneRef = useRef(false);
 

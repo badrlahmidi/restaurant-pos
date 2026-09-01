@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { clearHighlights, highlightAndReady } from '../helpers/highlight.ts';
 import { loginWithPin, openSummaryPage, resetSession } from '../helpers/auth.ts';
 import { captureLocator, capturePage } from '../helpers/screenshot.ts';

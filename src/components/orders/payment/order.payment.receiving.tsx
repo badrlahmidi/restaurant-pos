@@ -633,6 +633,7 @@ const OrderPaymentReceivingContent = ({
                           order: full,
                           taxes: allTaxes?.data
                         }, {userId: page?.user?.id});
+                        return true;
                       },
                       onPrinted: () => setTempPrinted(true),
                     });

@@ -1,4 +1,3 @@
-import {Button} from "@/components/common/input/button.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCopy, faSquareCheck} from "@fortawesome/free-regular-svg-icons";
 import {faPause, faPlay, faTrash} from "@fortawesome/free-solid-svg-icons";
@@ -8,6 +7,7 @@ import {useAtom} from "jotai";
 import {appPage, appState} from "@/store/jotai.ts";
 import {nanoid} from "nanoid";
 import {MenuItemType} from "@/api/model/cart_item.ts";
+import type {Order} from "@/api/model/order.ts";
 import {useTranslation} from "react-i18next";
 import {useDB} from "@/api/db/db.ts";
 import {Tables} from "@/api/db/tables.ts";
@@ -190,8 +190,8 @@ export const CartActions = () => {
             items: kitchenItems[kitchenId],
             order: {
               ...order,
-              order_type: state?.orderType ?? order?.order_type,
-              user: page?.user ?? order?.user,
+              order_type: state?.orderType ?? (order as Order)?.order_type,
+              user: page?.user ?? (order as Order)?.user,
             },
             kitchenName: k.name,
             table: state?.table,

@@ -11,14 +11,12 @@ import {
   faMotorcycle,
   faStore,
   faUtensils, faUsers, faWarehouse, faWrench,
-  faClock,
   faPowerOff,
   faReceipt,
   faUser,
   faPlug
 } from "@fortawesome/free-solid-svg-icons";
 import { cn } from "@/lib/utils.ts";
-import { Button } from "@/components/common/input/button.tsx";
 import { IconTooltipButton } from "@/components/common/input/icon.tooltip.button.tsx";
 import { CSSProperties, useMemo } from "react";
 import {NavLink, useNavigate} from "react-router";

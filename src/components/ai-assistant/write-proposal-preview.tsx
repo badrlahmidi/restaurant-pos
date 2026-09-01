@@ -21,10 +21,8 @@ type WriteProposalPreviewProps = {
 
 const RecordIssues = ({
   record,
-  t,
 }: {
   record: ImportRecord;
-  t: (key: string, options?: Record<string, unknown>) => string;
 }) => {
   const errorMessages = record.issues
     .filter(issue => issue.severity === "error")
@@ -85,7 +83,7 @@ function ProposalRecordCard({
           </div>
         ))}
       </dl>
-      <RecordIssues record={record} t={t} />
+      <RecordIssues record={record} />
     </div>
   );
 }

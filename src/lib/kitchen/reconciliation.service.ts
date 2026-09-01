@@ -28,6 +28,8 @@ import {ClosingCycleWindow, loadClosingCycleConfig} from "@/lib/closing-cycle.ts
 import {computeLine} from "@/lib/kitchen/reconciliation.calculations.ts";
 import {nowSurrealDateTime, toJsDate, toSurrealDateTime} from "@/lib/datetime.ts";
 import {safeNumber} from "@/lib/utils.ts";
+import {nanoid} from "nanoid";
+import {runWriteTransaction, type TxStatement} from "@/lib/db-transaction.ts";
 import {fetchNextSequentialNumber} from "@/utils/recordNumbers.ts";
 import {postDocument} from "@/lib/inventory/posting.service.ts";
 import {toLocationRecordId} from "@/lib/inventory/location.service.ts";
@@ -406,6 +408,31 @@ const collectIngredientScope = (
   return Array.from(ids);
 };
 
+const buildRevisionStatement = (
+  varKey: string,
+  reconciliationId: string,
+  revisionNumber: number,
+  changeType: KitchenReconciliationChangeType,
+  userId: string,
+  snapshotAfter: Record<string, unknown>,
+  snapshotBefore?: Record<string, unknown> | null,
+  fieldChanges: Array<{item_id?: string; field: string; old: unknown; new: unknown}> = []
+): TxStatement => ({
+  sql: `CREATE ${Tables.kitchen_reconciliation_revisions} CONTENT $${varKey} RETURN NONE`,
+  vars: {
+    [varKey]: {
+      reconciliation: toReconciliationRecordId(reconciliationId),
+      revision_number: revisionNumber,
+      change_type: changeType,
+      changed_by: toUserRecordId(userId),
+      changed_at: nowSurrealDateTime(),
+      snapshot_before: snapshotBefore ?? undefined,
+      snapshot_after: snapshotAfter,
+      field_changes: fieldChanges,
+    },
+  },
+});
+
 const writeRevision = async (
   db: DatabaseClient,
   reconciliationId: string,
@@ -416,21 +443,18 @@ const writeRevision = async (
   snapshotBefore?: Record<string, unknown> | null,
   fieldChanges: Array<{item_id?: string; field: string; old: unknown; new: unknown}> = []
 ) => {
-  await db.query(
-    `CREATE ${Tables.kitchen_reconciliation_revisions} CONTENT $content RETURN NONE`,
-    {
-      content: {
-        reconciliation: toReconciliationRecordId(reconciliationId),
-        revision_number: revisionNumber,
-        change_type: changeType,
-        changed_by: toUserRecordId(userId),
-        changed_at: nowSurrealDateTime(),
-        snapshot_before: snapshotBefore ?? undefined,
-        snapshot_after: snapshotAfter,
-        field_changes: fieldChanges,
-      },
-    }
-  );
+  await runWriteTransaction(db, [
+    buildRevisionStatement(
+      "rev_content",
+      reconciliationId,
+      revisionNumber,
+      changeType,
+      userId,
+      snapshotAfter,
+      snapshotBefore,
+      fieldChanges
+    ),
+  ]);
 };
 
 const buildLineRecords = (
@@ -834,36 +858,43 @@ const hasActiveReconciliation = async (
   return unwrapRows(rows).length > 0;
 };
 
-const createReconciliationHeader = async (
-  db: DatabaseClient,
-  params: {
-    locationId: string;
-    businessDate: string;
-    window: ClosingCycleWindow;
-    status: KitchenReconciliationStatus;
-    userId: string;
-    revision?: number;
-    parentId?: string;
-  }
-) => {
-  const [created] = await db.create(Tables.kitchen_reconciliations, {
-    location: toLocationRecordId(params.locationId),
-    business_date: params.businessDate,
-    date_from: toSurrealDateTime(params.window.date_from),
-    date_to: toSurrealDateTime(params.window.date_to),
-    status: params.status,
-    revision: params.revision ?? 1,
-    parent: params.parentId ? toReconciliationRecordId(params.parentId) : undefined,
-    created_at: nowSurrealDateTime(),
-    created_by: toUserRecordId(params.userId),
-  });
-
-  if (!created?.id) {
-    throw new Error("Failed to create reconciliation");
-  }
-
-  return recordIdToString(created.id);
+type ReconciliationHeaderParams = {
+  locationId: string;
+  businessDate: string;
+  window: ClosingCycleWindow;
+  status: KitchenReconciliationStatus;
+  userId: string;
+  revision?: number;
+  parentId?: string;
 };
+
+/**
+ * Builds the CREATE statement for a new reconciliation header with a
+ * client-generated id, so it can be composed into a transaction alongside
+ * other statements (e.g. superseding the previous revision) that need to
+ * reference the new id before it commits.
+ */
+const buildReconciliationHeaderStatement = (
+  varKey: string,
+  id: string,
+  params: ReconciliationHeaderParams
+): TxStatement => ({
+  sql: `CREATE $${varKey}_id CONTENT $${varKey}_data`,
+  vars: {
+    [`${varKey}_id`]: toReconciliationRecordId(id),
+    [`${varKey}_data`]: {
+      location: toLocationRecordId(params.locationId),
+      business_date: params.businessDate,
+      date_from: toSurrealDateTime(params.window.date_from),
+      date_to: toSurrealDateTime(params.window.date_to),
+      status: params.status,
+      revision: params.revision ?? 1,
+      parent: params.parentId ? toReconciliationRecordId(params.parentId) : undefined,
+      created_at: nowSurrealDateTime(),
+      created_by: toUserRecordId(params.userId),
+    },
+  },
+});
 
 export const createMissedStub = async (
   db: DatabaseClient,
@@ -878,19 +909,21 @@ export const createMissedStub = async (
 
   // Marker only — no line items. Next verified day's opening uses last verified close.
   const resolvedWindow = window ?? (await resolveBusinessDateWindow(db, businessDate));
-  const reconciliationId = await createReconciliationHeader(db, {
-    locationId,
-    businessDate,
-    window: resolvedWindow,
-    status: "missed",
-    userId,
-  });
-
-  await writeRevision(db, reconciliationId, 1, "missed_stub", userId, {
-    status: "missed",
-    business_date: businessDate,
-    item_count: 0,
-  });
+  const reconciliationId = `${Tables.kitchen_reconciliations}:${nanoid()}`;
+  await runWriteTransaction(db, [
+    buildReconciliationHeaderStatement("stub_hdr", reconciliationId, {
+      locationId,
+      businessDate,
+      window: resolvedWindow,
+      status: "missed",
+      userId,
+    }),
+    buildRevisionStatement("stub_rev", reconciliationId, 1, "missed_stub", userId, {
+      status: "missed",
+      business_date: businessDate,
+      item_count: 0,
+    }),
+  ]);
 };
 
 export type GenerateProgressStage =
@@ -970,14 +1003,7 @@ export const generateReconciliation = async (
     await aggregateMovementData(db, locationId, window, businessDate, onProgress);
 
   onProgress?.("saving");
-  const reconciliationId = await createReconciliationHeader(db, {
-    locationId,
-    businessDate,
-    window,
-    status: "draft",
-    userId,
-  });
-
+  const reconciliationId = `${Tables.kitchen_reconciliations}:${nanoid()}`;
   const lineRecords = buildLineRecords(
     reconciliationId,
     itemIds,
@@ -990,15 +1016,26 @@ export const generateReconciliation = async (
     false
   );
 
+  // Header + its "create" revision row commit together: if the connection
+  // drops before the (separately chunked) line insert, you get an empty
+  // draft with an honest audit trail, never a header with no revision 1.
+  await runWriteTransaction(db, [
+    buildReconciliationHeaderStatement("gen_hdr", reconciliationId, {
+      locationId,
+      businessDate,
+      window,
+      status: "draft",
+      userId,
+    }),
+    buildRevisionStatement("gen_rev", reconciliationId, 1, "create", userId, {
+      status: "draft",
+      business_date: businessDate,
+      item_count: lineRecords.length,
+    }),
+  ]);
+
   onProgress?.("saving_lines");
   await persistLineItems(db, reconciliationId, lineRecords);
-
-  onProgress?.("saving_revision");
-  await writeRevision(db, reconciliationId, 1, "create", userId, {
-    status: "draft",
-    business_date: businessDate,
-    item_count: lineRecords.length,
-  });
 
   // Load header only — full line FETCH/IN binds after a large insert can hang the socket.
   // The hook calls load() next, which attaches items in a separate request.
@@ -1041,20 +1078,28 @@ export const createRevision = async (
   if (!locationId) throw new Error("Reconciliation missing location");
   const newRevision = (source.revision ?? 1) + 1;
 
-  const newId = await createReconciliationHeader(db, {
-    locationId,
-    businessDate: source.business_date,
-    window: {
-      date_from: toJsDate(source.date_from),
-      date_to: toJsDate(source.date_to),
+  // The new header and marking the old one superseded must commit together —
+  // otherwise a dropped connection between the two leaves two "active"
+  // reconciliations for the same location/date.
+  const newId = `${Tables.kitchen_reconciliations}:${nanoid()}`;
+  await runWriteTransaction(db, [
+    buildReconciliationHeaderStatement("rev_hdr", newId, {
+      locationId,
+      businessDate: source.business_date,
+      window: {
+        date_from: toJsDate(source.date_from),
+        date_to: toJsDate(source.date_to),
+      },
+      status: "draft",
+      userId,
+      revision: newRevision,
+      parentId: reconciliationId,
+    }),
+    {
+      sql: `UPDATE $rev_source MERGE {superseded_by: $rev_hdr_id}`,
+      vars: {rev_source: toReconciliationRecordId(reconciliationId)},
     },
-    status: "draft",
-    userId,
-    revision: newRevision,
-    parentId: reconciliationId,
-  });
-
-  await db.merge(toReconciliationRecordId(reconciliationId), {superseded_by: toReconciliationRecordId(newId)});
+  ]);
 
   const manualByItem = new Map<string, ManualLineInput>();
   source.items?.forEach((line) => {
@@ -1139,26 +1184,6 @@ const upsertManualTables = async (
     .map((line) => toInventoryItemRecordId(line.itemId))
     .filter(Boolean);
 
-  // Only clear/reinsert rows for lines being saved — never wipe the whole recon.
-  await Promise.all([
-    db.query(
-      `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $reconciliation AND item IN $items RETURN NONE`,
-      {reconciliation, items}
-    ),
-  ]);
-
   const stockRows: Array<Record<string, unknown>> = [];
   const wasteRows: Array<Record<string, unknown>> = [];
   const staffRows: Array<Record<string, unknown>> = [];
@@ -1205,18 +1230,36 @@ const upsertManualTables = async (
     }
   }
 
-  const insertChunks = async (table: Tables, rows: Array<Record<string, unknown>>) => {
-    if (rows.length === 0) return;
+  // Clear + reinsert only the lines being saved (never the whole recon), as one
+  // transaction so a dropped connection can't drop the counts without replacing
+  // them. INSERTs stay chunked (large single INSERTs hang) — chunked statements
+  // inside one BEGIN…COMMIT are still atomic.
+  const statements: TxStatement[] = [
+    {
+      sql: `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`,
+      vars: {sml_rec: reconciliation, sml_items: items},
+    },
+    {sql: `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $sml_rec AND item IN $sml_items RETURN NONE`},
+  ];
+
+  let chunkIndex = 0;
+  const pushInsertChunks = (table: Tables, rows: Array<Record<string, unknown>>) => {
     for (let i = 0; i < rows.length; i += LINE_INSERT_CHUNK) {
-      const chunk = rows.slice(i, i + LINE_INSERT_CHUNK);
-      await db.query(`INSERT INTO ${table} $rows RETURN NONE`, {rows: chunk});
+      const key = `sml_rows_${chunkIndex++}`;
+      statements.push({
+        sql: `INSERT INTO ${table} $${key} RETURN NONE`,
+        vars: {[key]: rows.slice(i, i + LINE_INSERT_CHUNK)},
+      });
     }
   };
+  pushInsertChunks(Tables.kitchen_stock_counts, stockRows);
+  pushInsertChunks(Tables.kitchen_wastes, wasteRows);
+  pushInsertChunks(Tables.kitchen_staff_meals, staffRows);
+  pushInsertChunks(Tables.kitchen_complimentary_items, complimentaryRows);
 
-  await insertChunks(Tables.kitchen_stock_counts, stockRows);
-  await insertChunks(Tables.kitchen_wastes, wasteRows);
-  await insertChunks(Tables.kitchen_staff_meals, staffRows);
-  await insertChunks(Tables.kitchen_complimentary_items, complimentaryRows);
+  await runWriteTransaction(db, statements);
 
   if (stockRows.length > 0) {
     await publishStockCountCompleted(undefined, {
@@ -1630,33 +1673,23 @@ export const discardDraftReconciliation = async (
   }
 
   const recId = toReconciliationRecordId(id);
-  // Chunked item wipe — bulk DELETE … WHERE hangs on large drafts.
+  // Chunked item wipe — bulk DELETE … WHERE hangs on large drafts. Kept outside
+  // the transaction below (chunked + idempotent); a re-run of discard re-does it.
   await deleteLineItemsByReconciliation(db, id);
+  // The child-table wipes + header delete run as one transaction so a dropped
+  // connection can't leave a half-discarded reconciliation.
   // RETURN NONE — default DELETE returns every deleted row over the websocket and hangs.
-  await Promise.all([
-    db.query(
-      `DELETE ${Tables.kitchen_reconciliation_revisions} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
-    db.query(
-      `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $id RETURN NONE`,
-      {id: recId}
-    ),
+  await runWriteTransaction(db, [
+    {
+      sql: `DELETE ${Tables.kitchen_reconciliation_revisions} WHERE reconciliation = $disc_rec_id RETURN NONE`,
+      vars: {disc_rec_id: recId},
+    },
+    {sql: `DELETE ${Tables.kitchen_stock_counts} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_wastes} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_staff_meals} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE ${Tables.kitchen_complimentary_items} WHERE reconciliation = $disc_rec_id RETURN NONE`},
+    {sql: `DELETE $disc_rec_id RETURN NONE`},
   ]);
-
-  await db.delete(recId);
 
   return generateReconciliation(db, locationId, businessDate, userId, onProgress);
 };

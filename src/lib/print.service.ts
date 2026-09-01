@@ -5,7 +5,7 @@ import i18n from "@/lib/i18n.ts";
 import { authHeaders } from "@/lib/session.ts";
 import { Tables } from "@/api/db/tables.ts";
 import type { Printer } from "@/api/model/printer.ts";
-import {RecordId, StringRecordId} from "surrealdb";
+import { StringRecordId} from "surrealdb";
 import { fetchShowInclusivePricesEnabled } from "@/hooks/useShowInclusivePrices.ts";
 import { fetchTranslateReceiptsEnabled } from "@/hooks/useTranslateReceipts.ts";
 import { fetchCurrencySymbolSettings } from "@/hooks/useCurrencySymbol.ts";
@@ -315,7 +315,7 @@ export async function dispatchPrint<Payload = any>(
     return false;
   }
 
-  let printPayload = { ...(payload as Record<string, unknown>) };
+  const printPayload = { ...(payload as Record<string, unknown>) };
   if (printPayload.order && (template === 'kitchen' || template === 'deletion')) {
     printPayload.order = await enrichOrderForPrint(db, printPayload.order as Record<string, unknown>);
   }

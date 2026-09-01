@@ -19,7 +19,7 @@ import {Tax} from "@/api/model/tax.ts";
 import {toRecordId} from "@/lib/utils.ts";
 import {RecordId} from "surrealdb";
 import {useTranslation} from 'react-i18next';
-import {del, set, createStore} from 'idb-keyval'
+import {del, set} from 'idb-keyval'
 
 const toRows = <T, >(result: unknown): T[] => {
   return Array.isArray(result) ? result as T[] : [];
@@ -158,9 +158,6 @@ export const CacheSettings = () => {
     }
   };
 
-  const cacheSize = useMemo(() => {
-    return cacheStats.reduce((prev, item) => prev + item.count, 0);
-  }, [cacheStats]);
 
   return (
     <div className="shadow p-5 rounded-xl bg-white" data-testid="settings-card-cache">

@@ -3,12 +3,11 @@ import Select, {
   components as selectComponents,
   GroupBase,
   Props,
+  type Theme,
 } from "react-select";
-import {Theme} from "react-select/dist/declarations/src/";
 import Spinner from "@/assets/images/spinner.svg";
 
 const primaryColor = "23 23 23";
-const focusRingColor = "152 189 254";
 
 export const themeConfig = (theme: Theme) => ({
   ...theme,
@@ -96,12 +95,13 @@ export function ReactSelect<
   Option,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>
->(props: Props<Option, IsMulti, Group>) {
+>(props: Props<Option, IsMulti, Group> & {label?: React.ReactNode}) {
   const {
     styles: stylesProp,
     components: componentsProp,
     menuPortalTarget: menuPortalTargetProp,
     isMulti,
+    label,
     ...restProps
   } = props;
 
@@ -112,7 +112,7 @@ export function ReactSelect<
 
   const BaseMenuPortal = componentsProp?.MenuPortal ?? selectComponents.MenuPortal;
 
-  return (
+  const select = (
     <Select
       closeMenuOnSelect={!isMulti}
       {...restProps}
@@ -142,5 +142,16 @@ export function ReactSelect<
         LoadingIndicator: componentsProp?.LoadingIndicator ?? LoadingIndicator,
       }}
     />
+  );
+
+  if (label === undefined || label === null || label === false) {
+    return select;
+  }
+
+  return (
+    <label className="flex flex-col gap-1">
+      <span>{label}</span>
+      {select}
+    </label>
   );
 }

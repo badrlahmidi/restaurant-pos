@@ -74,7 +74,7 @@ export const ConfigurationPanel = ({
       const current = await getConfiguration(selectedProviderId);
       // Only save if not already connected (avoid overwriting)
       if (current.tenantId === tenantId) return;
-      const updated = { ...current, tenantId };
+      const updated: Record<string, unknown> = { ...current, tenantId };
       if (companyName) updated.companyName = companyName;
       await saveConfiguration(selectedProviderId, updated);
       setFormValues(updated);

@@ -1,5 +1,3 @@
-import {Tables} from "@/api/db/tables.ts";
-import type {Order} from "@/api/model/order.ts";
 import {OrderStatus} from "@/api/model/order.ts";
 import {getOrders} from "@/api/reports/operations/orders.ts";
 import {getVoids} from "@/api/reports/sales/extended.ts";

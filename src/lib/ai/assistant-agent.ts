@@ -9,7 +9,7 @@ import {
 import {isLocalAiReportCompactMode} from "@/lib/ai/config.ts";
 import {getAiAssistantSystemPrompt} from "@/lib/ai/schema.ts";
 import {executeAiReportTool, type ExecuteToolContext} from "@/lib/ai/tools/executor.ts";
-import {filterWriteToolsByPermissions, canUseWriteTool} from "@/lib/ai/tools/write-permissions.ts";
+import { canUseWriteTool} from "@/lib/ai/tools/write-permissions.ts";
 import {listWriteToolNames} from "@/lib/ai/tools/write-tool-registry.ts";
 import {buildWriteProposal, type TFunc, type WriteProposal, type WriteToolContext} from "@/lib/ai/tools/write-tools.ts";
 import {selectAssistantToolsForPrompt} from "@/lib/ai/tools/select-assistant-tools.ts";
@@ -73,9 +73,6 @@ const resolveToolset = (prompt: string, allowedModules: string[]): ResolvedTools
   const {tools, domains} = selectAssistantToolsForPrompt(prompt, allowedModules, {compact});
   return {tools, domains, compact};
 };
-
-const stripSystemMessages = (messages: OpenAIChatMessage[]): OpenAIChatMessage[] =>
-  messages.filter(message => message.role !== "system");
 
 const extractLastUserPrompt = (messages: OpenAIChatMessage[]): string => {
   for (let i = messages.length - 1; i >= 0; i--) {

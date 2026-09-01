@@ -49,7 +49,7 @@ function useApi<T>(
   useApiOptions?: any,
   initialSelects: string[] = ['*'],
 ): UseApiResult<T> {
-  const [table, setTable] = useState<string|undefined>(thing);
+  const [table] = useState<string|undefined>(thing);
   const [filters, setFilters] = useState<string[]>(initialFilters);
   const [sorts, setSorts] = useState<string[]>(initialSort);
   const [page, setPage] = useState<number>(initialOffset);
@@ -109,7 +109,7 @@ function useApi<T>(
     isFetching,
     error,
     refetch,
-  }: UseQueryResult<T> = useQuery({
+  } = useQuery({
     queryKey: queryKeys,
     queryFn: fetchFilteredData,
     enabled: isConnected && !!db && !!table && enabledOverride,
@@ -117,7 +117,7 @@ function useApi<T>(
     retry: false,
     gcTime: 0,
     ...restApiOptions,
-  });
+  }) as UseQueryResult<T>;
 
   const resetFilters = () => {
     setFilters(initialFilters);

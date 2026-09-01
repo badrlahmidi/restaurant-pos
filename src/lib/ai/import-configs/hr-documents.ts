@@ -137,7 +137,7 @@ export function createCostCenterImportConfig({db, t}: {db: ImportDbLike; t: TFun
   };
 }
 
-export function createLeaveRequestImportConfig({db, t}: {db: ImportDbLike; t: TFunc}): ImportConfiguration {
+export function createLeaveRequestImportConfig({db, t, context = {}}: {db: ImportDbLike; t: TFunc; context?: WriteToolContext}): ImportConfiguration {
   const fields: ImportField[] = [
     {name: "employee", type: "string", required: true, description: "Employee number or name"},
     {name: "leave_type", type: "string", required: true},

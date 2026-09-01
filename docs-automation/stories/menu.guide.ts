@@ -3,7 +3,6 @@ import { clearHighlights, highlightAndReady } from '../helpers/highlight.ts';
 import {
   ensureFloorMenuMode,
   loginWithPin,
-  openMenuOrdering,
   reloadAppCache,
   resetSession,
   waitForDishes,

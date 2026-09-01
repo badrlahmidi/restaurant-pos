@@ -30,7 +30,10 @@ import { publishSaleCompleted } from "@/integrations/accounting/events/publish.t
 import { publishInvoiceCreated } from "@/integrations/events/publish/payments.ts";
 
 type DBLike = {
-  query: (sql: string, params?: Record<string, unknown>) => Promise<unknown[][]>;
+  query: <R extends unknown[] = unknown[][]>(
+    sql: string,
+    params?: Record<string, unknown>
+  ) => Promise<R>;
   create: (table: string, data: Record<string, unknown>) => Promise<unknown>;
   merge: (id: unknown, data: Record<string, unknown>) => Promise<unknown>;
   delete: (id: unknown) => Promise<unknown>;

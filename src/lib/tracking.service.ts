@@ -21,18 +21,6 @@ type TrackingUser = {
   user_shift?: { name?: string };
 };
 
-function toIsoDate(value?: Date | string): string {
-  if (!value) return new Date().toISOString();
-  if (value instanceof Date) return value.toISOString();
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return new Date().toISOString();
-  }
-
-  return date.toISOString();
-}
-
 function getResolution(): string | undefined {
   if (typeof window === "undefined") return undefined;
   return `${window.innerWidth}x${window.innerHeight}`;

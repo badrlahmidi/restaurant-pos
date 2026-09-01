@@ -14,7 +14,7 @@ interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
 }
 
 export function Calendar<T extends DateValue> (
-  { errorMessage, ...props }: MyCalendarProps<T>
+  { errorMessage: _errorMessage, ...props }: MyCalendarProps<T>
 ) {
   return (
     <BaseCalendar {...props}>

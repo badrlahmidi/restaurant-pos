@@ -65,7 +65,7 @@ const summarizeTimeEntry = (row: TimeEntry) => ({
   status: row.attendance_status,
   approvalStatus: row.approval_status,
   source: row.source,
-  breakCount: Array.isArray((row as {breaks?: unknown[]}).breaks) ? (row as {breaks: unknown[]}).breaks.length : 0,
+  breakCount: Array.isArray((row as {breaks?: unknown[]}).breaks) ? (row as {breaks?: unknown[]}).breaks!.length : 0,
 });
 
 const summarizeLeaveBalance = (row: LeaveBalance) => ({

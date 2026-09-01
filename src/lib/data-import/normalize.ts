@@ -19,7 +19,7 @@ function coerceBoolean(value: any): boolean | null {
 function coerceNumber(value: any): number | null {
   if (value === null || value === undefined || value === "") return null;
   if (typeof value === "number" && Number.isFinite(value)) return value;
-  const cleaned = String(value).replace(/[^0-9.,\-]/g, "").replace(/,/g, "");
+  const cleaned = String(value).replace(/[^0-9.,-]/g, "").replace(/,/g, "");
   if (!cleaned) return null;
   const n = Number(cleaned);
   return Number.isFinite(n) ? n : null;
@@ -71,7 +71,7 @@ function coerceFieldValue(
     if (field.defaultValue !== undefined) {
       return {value: field.defaultValue};
     }
-    return {value: field.type === "reference[]" ? [] : null};
+    return {value: field.type === "reference[]" || field.type === "string[]" ? [] : null};
   }
 
   switch (field.type) {
@@ -91,7 +91,7 @@ function coerceFieldValue(
             field: field.name,
             code: "invalid_type",
             severity: "error",
-            message: `"${field.label}" must be a number`,
+            message: `"${field.label ?? field.name}" must be a number`,
           },
         };
       }
@@ -109,7 +109,7 @@ function coerceFieldValue(
             field: field.name,
             code: "invalid_type",
             severity: "error",
-            message: `"${field.label}" must be true or false`,
+            message: `"${field.label ?? field.name}" must be true or false`,
           },
         };
       }
@@ -117,6 +117,9 @@ function coerceFieldValue(
     }
     case "date": {
       return {value: coerceDate(raw)};
+    }
+    case "string[]": {
+      return {value: splitMulti(raw)};
     }
     case "reference": {
       if (typeof raw === "object" && raw !== null && ("label" in raw || "id" in raw)) {
@@ -224,7 +227,7 @@ export function normalizeRecords(
           field: field.name,
           code: "custom",
           severity: "error",
-          message: err?.message || `Transform failed for ${field.label}`,
+          message: err?.message || `Transform failed for ${field.label ?? field.name}`,
         });
       }
     }

@@ -23,7 +23,7 @@ import {toast} from "sonner";
 import {useQueryBuilder} from "@/api/db/query-builder.ts";
 import {LabelValue} from "@/api/model/common.ts";
 import {assertOrderMutationsAllowed} from "@/lib/closing.guard.ts";
-import {OrderMerge, OrderMergeCreatePayload} from "@/api/model/order_merge.ts";
+import {OrderMerge} from "@/api/model/order_merge.ts";
 import {toRecordId} from "@/lib/utils.ts";
 import {generateNextInvoiceNumber, getNextAutoId} from "@/lib/invoice.ts";
 import {postOrderTracking} from "@/lib/tracking.service.ts";

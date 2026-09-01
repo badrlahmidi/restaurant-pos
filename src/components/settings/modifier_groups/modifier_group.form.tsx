@@ -11,7 +11,7 @@ import {useTranslation} from 'react-i18next';
 import i18n from '@/lib/i18n.ts';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import { ModifierGroup } from "@/api/model/modifier_group.ts";
 import useApi, { SettingsData } from "@/api/db/use.api.ts";
 import { ReactSelect } from "@/components/common/input/custom.react.select.tsx";

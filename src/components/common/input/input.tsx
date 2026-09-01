@@ -55,12 +55,9 @@ export const Input = forwardRef((props: InputProps, ref: Ref<any>) => {
     id: providedId,
     ...inputProps
   } = props;
-  let formContext: ReturnType<typeof useFormContext> | null = null;
-  try {
-    formContext = useFormContext();
-  } catch (e) {
-    formContext = null;
-  }
+  // react-hook-form v7 returns null (does not throw) when there is no
+  // FormProvider above, so this is safe to call unconditionally.
+  const formContext = useFormContext();
   const registeredValue = formContext && name ? formContext.watch(name) : undefined;
   const resolvedValue = value !== undefined ? value : (!enableKeyboard ? registeredValue : undefined);
   const onClick = useCallback((event: any) => {

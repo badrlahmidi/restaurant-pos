@@ -14,7 +14,7 @@ import {recordIdToString} from "@/api/reports/shared/records.ts";
 
 const NORMAL_BALANCES = ["debit", "credit"];
 
-export function createAiAccountImportConfig({db, t}: {db: ImportDbLike; t: TFunc}): ImportConfiguration {
+export function createAiAccountImportConfig({db}: {db: ImportDbLike; t: TFunc}): ImportConfiguration {
   const fields: ImportField[] = [
     {name: "code", type: "string", required: true},
     {name: "name", type: "string", required: true},
@@ -100,7 +100,6 @@ async function resolveAccountId(db: ImportDbLike, key: string) {
 
 export function createAiJournalEntryImportConfig({
   db,
-  t,
   context = {},
 }: {
   db: ImportDbLike;
@@ -145,7 +144,7 @@ export function createAiJournalEntryImportConfig({
 
       let entryId = entryCache.get(reference);
       if (!entryId) {
-        const [created] = await db.create?.(Tables.account_journal_entries, {
+        const [created] = await db.create(Tables.account_journal_entries, {
           entry_date: entryDate,
           description: v.description ? String(v.description) : reference,
           status: "posted",

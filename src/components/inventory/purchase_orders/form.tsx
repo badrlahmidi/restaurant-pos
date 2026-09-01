@@ -24,7 +24,6 @@ import {useAtom} from "jotai";
 import {appPage} from "@/store/jotai.ts";
 import {fetchNextSequentialNumber, isUniqueRecordNumber} from "@/utils/recordNumbers.ts";
 import {DatePicker} from "@/components/common/antd/datepicker.tsx";
-import {DateValue} from "react-aria-components";
 import {dateToCalendarDate, getToday} from "@/utils/date.ts";
 import { documentCreatedAtFromDateValue, toJsDate } from "@/lib/datetime.ts";
 import {InventoryFormLineTotal} from "@/components/inventory/common/form.line.total.tsx";
@@ -39,15 +38,6 @@ interface PurchaseOrderItemFormValue {
   quantity: number | string;
   price?: number | string;
   supplier?: { label: string; value: string } | null;
-}
-
-interface InventoryPurchaseOrderFormValues {
-  po_number: number | string;
-  status: string;
-  supplier?: { label: string; value: string } | null;
-  date?: DateValue | null;
-  documents?: FileList | null;
-  items: PurchaseOrderItemFormValue[];
 }
 
 interface Props {

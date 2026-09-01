@@ -95,7 +95,7 @@ export function applyColumnMapping(
  */
 export function autoMapColumns(
   headers: string[],
-  fields: Array<{name: string; label: string; aliases?: string[]}>
+  fields: Array<{name: string; label?: string; aliases?: string[]}>
 ): Record<string, string | ""> {
   const normalizedHeaders = headers.map((h) => ({
     raw: h,
@@ -107,7 +107,7 @@ export function autoMapColumns(
   for (const field of fields) {
     const candidates = [
       field.name,
-      field.label,
+      field.label ?? field.name,
       ...(field.aliases ?? []),
     ].map((c) => c.trim().toLowerCase());
 

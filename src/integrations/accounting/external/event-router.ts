@@ -1,8 +1,7 @@
 import { IntegrationEvent } from '@/integrations/core/types.ts';
 import { AccountingRemoteAdapter, ExternalAccountingConfig } from '@/integrations/accounting/external/types.ts';
 import { EntityMappingRepository } from '@/integrations/accounting/external/entity-mapping-repository.ts';
-import { categorizeExternalError, formatSyncFailure, isRetriableExternalError } from '@/integrations/accounting/external/errors.ts';
-import { parseExternalAccountingConfig } from '@/integrations/accounting/external/config.ts';
+import { categorizeExternalError, isRetriableExternalError } from '@/integrations/accounting/external/errors.ts';
 import { AccountingPostingEngine } from '@/integrations/accounting/posting-engine.ts';
 import { InternalAccountingConfig } from '@/integrations/accounting/types.ts';
 
@@ -22,9 +21,9 @@ export type ExternalEventRoutingResult = {
 export const routeExternalAccountingEvent = async (
   event: IntegrationEvent<any>,
   providerId: string,
-  adapter: AccountingRemoteAdapter,
+  _adapter: AccountingRemoteAdapter,
   config: ExternalAccountingConfig,
-  mappingRepo: EntityMappingRepository,
+  _mappingRepo: EntityMappingRepository,
   postingEngine: AccountingPostingEngine,
   enqueueJob: (action: string, payload: Record<string, unknown>, idempotencyKey?: string) => Promise<void>
 ): Promise<ExternalEventRoutingResult> => {

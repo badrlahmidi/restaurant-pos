@@ -14,7 +14,6 @@ import type {DbClient} from "@/api/reports/shared/types.ts";
 import {Tables} from "@/api/db/tables.ts";
 import {getAppTimezone} from "@/lib/datetime.ts";
 import {fetchLedgerNetsByStore} from "@/lib/inventory/ledger.service.ts";
-import {safeNumber} from "@/lib/utils.ts";
 import {getReorderLevelForStore} from "@/utils/inventory.ts";
 
 const ITEM_CAP = 40;

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, aronium-theme]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: type-check · test · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # CI runners are slower/noisier than a dev box; the discount-engine perf
+      # test is a regression smoke test, not an SLA. Keep it green but meaningful.
+      DISCOUNT_PERF_BUDGET_MS: "600"
+      # Silence Vite's interactive prompts / update checks.
+      CI: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # NOTE: `npm ci` is not usable yet — package-lock.json is out of sync with
+      # package.json upstream, and the dep tree needs legacy peer resolution
+      # (eslint 10 vs @typescript-eslint/eslint-plugin 6). Regenerate the
+      # lockfile (`npm install --legacy-peer-deps` committed) to switch to `npm ci`.
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npx vite build
+
+      - name: Gateway tests
+        # Standalone package; its lockfile is in sync so `npm ci` is fine here.
+        # Runs the jwt, surreal-client and login-throttle suites via node --test.
+        working-directory: gateway
+        run: |
+          npm ci
+          npm test
+
+      - name: Lint
+        # Blocking on ERRORS. ~270 react-hooks/exhaustive-deps warnings remain a
+        # backlog (see .eslintrc.cjs ratchet plan) and do not fail the run.
+        run: npm run lint

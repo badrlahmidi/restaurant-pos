@@ -1,6 +1,5 @@
 import {DateTime} from "luxon";
 import dayjs, {type Dayjs} from "dayjs";
-import {toRecordId} from "@/lib/utils.ts";
 import type {AccountHeadType} from "@/api/model/account.ts";
 
 export const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";

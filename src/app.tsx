@@ -13,7 +13,6 @@ import {SecurityProvider} from "@/providers/security.provider.tsx";
 import {SecurityModal} from "@/components/security/security-modal.tsx";
 import {useDeliveryOrders} from "@/hooks/useDeliveryOrders.ts";
 import {DeliveryOrderPopup} from "@/components/delivery/delivery-order-popup.tsx";
-import {initializePrintTemplates} from "@/lib/print.registry.tsx";
 import {BrowserRouter} from "react-router";
 import {TableLockProvider} from "@/providers/table.lock.provider.tsx";
 import {AutoCheckCloseProvider} from "@/providers/auto-check-close.provider.tsx";
@@ -24,6 +23,7 @@ import {I18nProvider} from "@/providers/i18n.provider.tsx";
 import {AppRoutes} from "@/routes/app.routes.tsx";
 import {IntegrationProvider} from "@/providers/integration.provider.tsx";
 import {AiAssistantWidget} from "@/components/ai-assistant/assistant-widget.tsx";
+import {ErrorBoundary} from "@/components/common/error-boundary/error-boundary.tsx";
 
 
 // react query client wrapper
@@ -56,6 +56,7 @@ function App() {
   }, []);
 
   return (
+    <ErrorBoundary fullscreen title="The application hit an unexpected error">
     <QueryClientProvider client={queryClient}>
       <ConfigProvider theme={appAntdTheme}>
         <DatabaseProvider>
@@ -91,6 +92,7 @@ function App() {
         </DatabaseProvider>
       </ConfigProvider>
     </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

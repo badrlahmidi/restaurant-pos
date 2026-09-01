@@ -654,16 +654,20 @@ export const getOrderDetail = async (
       }),
   ];
 
-  const taxes = (order.order_taxes ?? []).map(row => ({
-    taxName: row.tax?.name || "Tax",
-    rate: safeNumber(row.tax?.rate ?? (row as {rate?: number}).rate),
-    amount: safeNumber(row.amount),
-  }));
+  const taxes = (order.order_taxes ?? []).map(row => {
+    const rowTax = typeof row.tax === "object" ? row.tax : undefined;
+    return {
+      taxName: rowTax?.name || "Tax",
+      rate: safeNumber(rowTax?.rate ?? (row as {rate?: number}).rate),
+      amount: safeNumber(row.amount),
+    };
+  });
 
   if (taxes.length === 0 && safeNumber(order.tax_amount) > 0) {
+    const orderTax = typeof order.tax === "object" ? order.tax : undefined;
     taxes.push({
-      taxName: order.tax?.name || "Tax",
-      rate: safeNumber(order.tax?.rate),
+      taxName: orderTax?.name || "Tax",
+      rate: safeNumber(orderTax?.rate),
       amount: safeNumber(order.tax_amount),
     });
   }
@@ -686,7 +690,7 @@ export const getOrderDetail = async (
   const kitchen = kitchenRows.map(row => ({
     itemName: row.order_item?.item?.name || "Item",
     kitchen: (row.kitchen as {name?: string} | undefined)?.name,
-    stage: row.stage_name || (row as {stage?: string}).stage,
+    stage: row.stage_name || (row as unknown as {stage?: string}).stage,
     status: row.status,
     activatedAt: row.activated_at,
     completedAt: row.completed_at,

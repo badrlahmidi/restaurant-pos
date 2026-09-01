@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PaymentType } from "@/api/model/payment_type.ts";
 import { Order } from "@/api/model/order.ts";
-import { OrderPayment } from "@/api/model/order_payment.ts";
 import { getRemoteGatewayAdapter } from "@/components/orders/payment/remote/gateways/registry.ts";
 import {
   PendingRemoteIntent,

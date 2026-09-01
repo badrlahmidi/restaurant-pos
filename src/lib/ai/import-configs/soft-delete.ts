@@ -1,4 +1,3 @@
-import {Tables} from "@/api/db/tables.ts";
 import type {ImportConfiguration, ImportDbLike, ImportField, ImportRecord} from "@/lib/data-import/types.ts";
 import type {TFunc} from "@/lib/ai/tools/write-tools.ts";
 import {

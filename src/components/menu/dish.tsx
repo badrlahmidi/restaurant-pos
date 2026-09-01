@@ -8,7 +8,6 @@ import {CartModifierGroup, MenuItem, MenuItemType} from "@/api/model/cart_item.t
 import {nanoid} from "nanoid";
 import {detectMimeType} from "@/utils/files.ts";
 import defaultImage from '@/assets/images/default-image.png';
-import {useDB} from "@/api/db/db.ts";
 import {
   buildCartModifierGroups,
   buildNestedGroupsForModifier,
@@ -47,7 +46,6 @@ export const MenuDish = ({
   const [state] = useAtom(appState);
   const [{groups_dishes}] = useAtom(appSettings);
   const [page] = useAtom(appPage);
-  const db = useDB();
   const showDishNumber = page.menuConfig?.showDishNumber !== false;
 
   const [modifiersModal, setModifiersModal] = useState(false);

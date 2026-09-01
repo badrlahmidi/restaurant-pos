@@ -1,6 +1,6 @@
 import {Tables} from "@/api/db/tables.ts";
 import type {BuyXGetYCondition, DiscountSchedule, DiscountTargets} from "@/api/model/discount.ts";
-import {qualifyRecordId, recordIdToString} from "@/api/reports/shared/records.ts";
+import {qualifyRecordId} from "@/api/reports/shared/records.ts";
 import {DISCOUNT_CATEGORIES, STACKING_MODES, TAX_TREATMENTS} from "@/lib/discount-engine/types.ts";
 import type {ImportDbLike} from "@/lib/data-import/types.ts";
 
@@ -190,8 +190,8 @@ export function parseSchedules(raw: unknown): DiscountSchedule[] {
         : [],
       start_time: String(row.start_time ?? ""),
       end_time: String(row.end_time ?? ""),
-      start_date: row.start_date ?? null,
-      end_date: row.end_date ?? null,
+      start_date: row.start_date != null ? String(row.start_date) : undefined,
+      end_date: row.end_date != null ? String(row.end_date) : undefined,
     };
   });
 }
@@ -215,7 +215,7 @@ export const parseOptionalNumber = (value: unknown): number | null => {
     return null;
   }
 
-  const cleaned = String(value).replace(/[^0-9.,\-]/g, "").replace(/,/g, "");
+  const cleaned = String(value).replace(/[^0-9.,-]/g, "").replace(/,/g, "");
   if (!cleaned) return null;
 
   const parsed = Number(cleaned);

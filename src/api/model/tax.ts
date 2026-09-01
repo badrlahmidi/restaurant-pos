@@ -1,4 +1,4 @@
-import { ID, Name, Priority } from "@/api/model/common.ts";
+import { Name, Priority } from "@/api/model/common.ts";
 import {DateTime, RecordId} from "surrealdb";
 
 export interface Tax extends Name, Priority{

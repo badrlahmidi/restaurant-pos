@@ -8,7 +8,6 @@ import {InventoryItems} from "@/components/inventory/items/index.tsx";
 import {InventorySuppliers} from "@/components/inventory/suppliers/index.tsx";
 import {InventoryCategories} from "@/components/inventory/categories/index.tsx";
 import {InventoryLocations} from "@/components/inventory/locations/index.tsx";
-import {InventoryItemGroups} from "@/components/inventory/item_groups/index.tsx";
 import {InventoryPurchaseOrders} from "@/components/inventory/purchase_orders/index.tsx";
 import {InventoryPurchases} from "@/components/inventory/purchases/index.tsx";
 import {InventoryPurchaseReturns} from "@/components/inventory/purchase_returns/index.tsx";

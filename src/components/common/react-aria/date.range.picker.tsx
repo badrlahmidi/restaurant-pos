@@ -28,7 +28,7 @@ interface DateRangePickerProps<T extends DateValue> extends BaseDateRangePickerP
 }
 
 export function DateRangePicker<T extends DateValue>({
-  label, description, errorMessage, firstDayOfWeek, ...props
+  label, description: _description, errorMessage: _errorMessage, firstDayOfWeek: _firstDayOfWeek, ...props
 }: DateRangePickerProps<T>){
   return (
     <BaseDateRangePicker className="group flex flex-col gap-1 flex-0" {...props}>

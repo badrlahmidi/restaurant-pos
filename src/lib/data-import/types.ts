@@ -2,6 +2,7 @@ import type {CsvImportMode} from "@/utils/csv-import.ts";
 
 export type ImportFieldType =
   | "string"
+  | "string[]"
   | "number"
   | "boolean"
   | "date"
@@ -60,7 +61,8 @@ export type ImportFieldLookup = {
 
 export type ImportField = {
   name: string;
-  label: string;
+  /** Human-readable label; falls back to `name` when omitted. */
+  label?: string;
   type: ImportFieldType;
   required?: boolean;
   /** When true, field need not be mapped for structured imports */

@@ -1,4 +1,3 @@
-import type { Discount } from '@/api/model/discount.ts'
 import type { DiscountCandidate, ResolvedSet } from '@/lib/discount-engine/types.ts'
 import { roundCurrency } from '@/lib/discount-engine/rounding.ts'
 import { toTargetId } from '@/lib/discount-engine/target-ids.ts'

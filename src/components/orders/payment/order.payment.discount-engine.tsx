@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/common/input/button.tsx'
 import {
   Discount,
-  DiscountType,
   getDiscountMaxValue,
   getDiscountMinValue,
   getDiscountValueType,

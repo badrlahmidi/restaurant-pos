@@ -5,7 +5,6 @@ import {SalesWeeklyFilter} from "@/components/reports/filters/sales.weekly.filte
 import {ProductMixWeeklyReportFilter} from "@/components/reports/filters/product.mix.weekly.filter.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faChevronRight} from "@fortawesome/free-solid-svg-icons";
-import {AuditFilter} from "@/components/reports/filters/audit.filter.tsx";
 import {CashClosingFilter} from "@/components/reports/filters/cash.closing.filter.tsx";
 import {DiscountsFilter} from "@/components/reports/filters/discounts.filter.tsx";
 import {SalesHourlyLabourFilter} from "@/components/reports/filters/sales.hourly.labour.filter.tsx";
@@ -14,9 +13,7 @@ import {SalesServerFilter} from "@/components/reports/filters/sales.server.filte
 import {SalesSummaryFilter} from "@/components/reports/filters/sales.summary.filter.tsx";
 import {ProductMixSummaryFilter} from "@/components/reports/filters/product.mix.summary.filter.tsx";
 import {ProductHourlyFilter} from "@/components/reports/filters/product.hourly.filter.tsx";
-import {ProductListFilter} from "@/components/reports/filters/product.list.filter.tsx";
 import {VoidsFilter} from "@/components/reports/filters/voids.filter.tsx";
-import {TableSummaryFilter} from "@/components/reports/filters/table.summary.filter.tsx";
 import {SalesAdvancedFilter} from "@/components/reports/filters/sales.advanced.filter.tsx";
 import {SalesSummary2Filter} from "@/components/reports/filters/sales.summary2.filter.tsx";
 import {CurrentInventoryFilter} from "@/components/reports/filters/current.inventory.filter.tsx";

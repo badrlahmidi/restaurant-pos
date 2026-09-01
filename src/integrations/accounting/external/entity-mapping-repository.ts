@@ -62,7 +62,7 @@ export class EntityMappingRepository {
       await this.db.create(Tables.integration_entity_mappings, data);
     }
 
-    return { ...mapping, updatedAt: nowSurrealDateTime() };
+    return { ...mapping, updatedAt: new Date().toISOString() };
   }
 
   async saveAll(mappings: Omit<EntityMapping, 'id' | 'updatedAt'>[]): Promise<void> {
@@ -87,7 +87,7 @@ export class EntityMappingRepository {
 
     sql += ' ORDER BY entity_type, posr_id';
 
-    const [rows] = await this.db.query<EntityMapping[]>(sql, params);
+    const [rows] = await this.db.query<[EntityMapping[]]>(sql, params);
     return rows ?? [];
   }
 
