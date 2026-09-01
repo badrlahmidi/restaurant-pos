@@ -25,7 +25,6 @@ import {useAtom} from "jotai";
 import {appPage} from "@/store/jotai.ts";
 import {fetchNextSequentialNumber, isUniqueRecordNumber} from "@/utils/recordNumbers.ts";
 import {DatePicker} from "@/components/common/antd/datepicker.tsx";
-import {DateValue} from "react-aria-components";
 import {dateToCalendarDate, getToday} from "@/utils/date.ts";
 import { documentCreatedAtFromDateValue, toJsDate } from "@/lib/datetime.ts";
 import {InventoryFormPricedLineTotal} from "@/components/inventory/common/form.line.total.tsx";
@@ -45,15 +44,6 @@ interface InventoryIssueReturnItemFormValue {
   issued?: number | string;
   quantity: number | string;
   comments?: string;
-}
-
-interface InventoryIssueReturnFormValues {
-  issuance?: { label: string; value: string } | null;
-  issued_to?: { label: string; value: string } | null;
-  location?: { label: string; value: string } | null;
-  date?: DateValue | null;
-  documents?: FileList;
-  items: InventoryIssueReturnItemFormValue[];
 }
 
 const issueLabel = (issue: InventoryIssue) => {

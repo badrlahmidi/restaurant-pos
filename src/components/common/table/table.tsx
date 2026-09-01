@@ -21,11 +21,6 @@ import { Loader } from "@/components/common/loader/loader.tsx";
 import { UseApiResult } from "@/api/db/use.api.ts";
 import {LabelValue} from "@/api/model/common.ts";
 
-interface ButtonProps {
-  title?: ReactNode;
-  html: ReactNode;
-}
-
 interface DropdownFilter {
   name: string
   options: LabelValue[]

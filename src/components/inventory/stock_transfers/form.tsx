@@ -42,14 +42,6 @@ interface StockTransferItemFormValue {
   quantity: number | string;
 }
 
-interface StockTransferFormValues {
-  fromLocation: SelectOption;
-  toLocation: SelectOption;
-  date: DateValue | null;
-  notes?: string;
-  items: StockTransferItemFormValue[];
-}
-
 interface Props {
   open: boolean;
   onClose: () => void;
