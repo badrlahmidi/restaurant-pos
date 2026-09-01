@@ -8,7 +8,6 @@ import Select, {
 import Spinner from "@/assets/images/spinner.svg";
 
 const primaryColor = "23 23 23";
-const focusRingColor = "152 189 254";
 
 export const themeConfig = (theme: Theme) => ({
   ...theme,

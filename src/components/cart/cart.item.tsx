@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, { useState} from "react";
 import {MenuItem, MenuItemType} from "@/api/model/cart_item.ts";
 import {useAtom} from "jotai";
 import {appPage, appState} from "@/store/jotai.ts";
@@ -9,9 +9,6 @@ import {MenuDishModifiers} from "@/components/menu/modifiers.tsx";
 import {Input} from "@/components/common/input/input.tsx";
 import {VirtualKeyboard} from "@/components/common/input/virtual.keyboard.tsx";
 import {useDB} from "@/api/db/db.ts";
-import {Tables} from "@/api/db/tables.ts";
-import {StringRecordId} from "surrealdb";
-import { nowSurrealDateTime } from "@/lib/datetime.ts";
 import {CartItemName} from "@/components/common/cart/cart.item.name.tsx";
 import {useTranslation} from "react-i18next";
 import { IconTooltipButton } from "@/components/common/input/icon.tooltip.button.tsx";
@@ -29,43 +26,6 @@ export const CartItem = ({ item, index }: Props) => {
   const [isModifiersOpen, setModifiersOpen] = useState(false);
   const [isCommentKeyboardOpen, setCommentKeyboardOpen] = useState(false);
   const [commentText, setCommentText] = useState(item.comments || "");
-
-  const [deleteReason, setDeleteReason] = useState('');
-  const [deleteComments, setDeleteComments] = useState('');
-
-  const hasOldItems = useMemo(() => {
-    return state.cart.filter(item => item.newOrOld === MenuItemType.old && item.isSelected).length > 0
-  }, [state.cart]);
-
-
-  const deleteOrderItem = async (item: MenuItem) => {
-    // TODO: ask for pin to confirm deletion
-    await db.merge(item.id, {
-      deleted_at: nowSurrealDateTime()
-    });
-
-    // TODO: ask for reason and comments
-    await db.create(Tables.order_voids, {
-      comments: deleteComments,
-      created_at: nowSurrealDateTime(),
-      deleted_by: new StringRecordId(page.user.id),
-      items: [item.id],
-      quantity: item.quantity,
-      reason: deleteReason,
-      logged_in_user: new StringRecordId(page.user.id)
-    });
-
-    setState(prev => ({
-      ...prev,
-      cart: prev.cart.map((_item) => {
-        if( item.id === _item.id ) {
-          _item.deleted_at = nowSurrealDateTime();
-        }
-
-        return _item;
-      })
-    }))
-  }
 
   return (
     <>

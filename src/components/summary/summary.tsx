@@ -158,11 +158,6 @@ export const Summary = ({
     );
   }, [orders]);
 
-  // Net (amount collected minus service charges and taxes)
-  const net = useMemo(() => {
-    return safeNumber(amountCollected - serviceCharges - taxCollected);
-  }, [amountCollected, serviceCharges, taxCollected]);
-
   // Refunds (from negative payment amounts or cancelled orders)
   const refunds = useMemo(() => {
     return safeNumber(
@@ -185,14 +180,6 @@ export const Summary = ({
     );
   }, [orders]);
 
-  // Gross (amount collected + refunds + total discounts)
-  const gross = useMemo(() => {
-    return safeNumber(amountCollected + refunds + discounts);
-  }, [amountCollected, refunds, discounts]);
-
-  // G Sales (Gross Sales) = sale price without tax
-  const gSales = salePriceWithoutTax;
-
   // Tips
   const tips = useMemo(() => {
     return safeNumber(
@@ -213,8 +200,6 @@ export const Summary = ({
     });
     return list;
   }, [orders]);
-
-  const couponsTotal = couponDiscounts;
 
   const couponsList = useMemo(() => {
     const list = {};

@@ -49,7 +49,7 @@ function useApi<T>(
   useApiOptions?: any,
   initialSelects: string[] = ['*'],
 ): UseApiResult<T> {
-  const [table, setTable] = useState<string|undefined>(thing);
+  const [table] = useState<string|undefined>(thing);
   const [filters, setFilters] = useState<string[]>(initialFilters);
   const [sorts, setSorts] = useState<string[]>(initialSort);
   const [page, setPage] = useState<number>(initialOffset);

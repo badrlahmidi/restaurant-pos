@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useTranslation } from 'react-i18next';
 import { Order, OrderStatus } from "@/api/model/order.ts";
 import { getInvoiceNumber, getOrderFilteredItems } from "@/lib/order.ts";
 import { calculateOrderTotal } from "@/lib/cart.ts";
@@ -18,7 +17,6 @@ export const DeliveryOrderItem: React.FC<DeliveryOrderItemProps> = ({
   order,
   onClick,
 }) => {
-  const { t } = useTranslation('delivery');
   const customer = order.customer;
   const delivery = order.delivery as any;
 

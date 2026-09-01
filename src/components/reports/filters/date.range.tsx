@@ -1,6 +1,5 @@
 import {DateRangePicker} from "@/components/common/antd/date.range.picker.tsx";
 import {useState} from "react";
-import { useTranslation } from 'react-i18next';
 import {DateTime} from "luxon";
 import { Dayjs } from "dayjs";
 import {getAppTimezone} from "@/lib/datetime.ts";
@@ -18,7 +17,6 @@ export function DateRange({
   label = "Select a range",
   isRequired = false,
 }: DateRangeProps) {
-  const { t } = useTranslation('reports');
   const now = () => DateTime.now().setZone(getAppTimezone());
   const todayStart = now().startOf("day").toFormat(import.meta.env.VITE_DATE_TIME_FORMAT);
   const todayEnd = now().endOf("day").toFormat(import.meta.env.VITE_DATE_TIME_FORMAT);

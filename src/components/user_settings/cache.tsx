@@ -158,9 +158,6 @@ export const CacheSettings = () => {
     }
   };
 
-  const cacheSize = useMemo(() => {
-    return cacheStats.reduce((prev, item) => prev + item.count, 0);
-  }, [cacheStats]);
 
   return (
     <div className="shadow p-5 rounded-xl bg-white" data-testid="settings-card-cache">
