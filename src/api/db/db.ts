@@ -10,6 +10,7 @@ import {
   Table,
   Values
 } from "surrealdb";
+import {useMemo} from "react";
 import {toast} from "sonner";
 import {useDatabase} from "@/hooks/useDatabase.ts";
 import {getSessionToken, isGatewayAuthEnabled} from "@/lib/session.ts";
@@ -309,16 +310,28 @@ export const useDB = () => {
     }, 'live query');
   }
 
-  return {
-    query,
-    db: client, // Expose the client for direct access if needed
-    select,
-    delete: del,
-    insert, create: insert,
-    update,
-    patch,
-    merge,
-    upsert,
-    live
-  }
+  // Stable identity across renders: `client` (the Surreal instance) is held in
+  // useState() in DatabaseProvider and never changes for the app's lifetime, and
+  // every method below is a pure closure over it (connection state is read live
+  // via client.isConnected, not captured). Memoising here means `useEffect`s that
+  // depend on `db` run on mount instead of on every render. The method closures
+  // are deliberately not deps — they are recreated each render but are pure
+  // functions of `client`.
+  return useMemo(
+    () => ({
+      query,
+      db: client, // Expose the client for direct access if needed
+      select,
+      delete: del,
+      insert,
+      create: insert,
+      update,
+      patch,
+      merge,
+      upsert,
+      live,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [client]
+  );
 }
